@@ -1,0 +1,31 @@
+html
+  head
+    title Timeline Online
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    block content
+    h1 Page de création de partie
+    <form action="/partie" method="POST">
+        <div>
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date"/> 
+        </div>
+        <div>
+            <input type="hidden" id="nom" name="nom" value="#{nom}"/> 
+        </div>
+        <div>
+            <label for="nom1">joueur 2</label>
+            <input type="text" id="nom1" name="nom1"/> 
+        </div>
+        <div>
+            <label for="nom2">joueur 3</label>
+            <input type="text" id="nom2" name="nom2"/> 
+        </div>
+        <div>
+            <label for="nom3">joueur 4</label>
+            <input type="text" id="nom3" name="nom3"/> 
+        </div>
+        <button type="submit">Terminer la partie</button>
+    </form>
+    span=erreur
+    <a href="/partie">liste des parties</a>
