@@ -26,31 +26,23 @@ router.get('/:nom_utilisateur',function(req,res){
 
 router.post('/',function(req,res){
     var partie = new partieModel({
-        _id:8,
-        date:res.date,
+        date:req.body.date,
         invites:[],
         pioches: [],
         tapis:[]
     });
-    utilisateurModel.find(null, function(err,utilisateur){
-        if (err)
-        {
-        res.send(err);
-        }
-        else{
-            utilisateur.update(
-                {$or:[{nom: res.nom},
-                    {nom: res.nom1},
-                    {nom: res.nom2},
-                    {nom: res.nom3}]
-                },
-                {$push: {invitations: req.params.id_partie}}
-            );
-        }
-    });
 
     partie.save();
-    res.render('creerpartie_form',{nom: res.nom});
+
+    utilisateurModel.findOneAndUpdate({nom: req.body.nom},{$push: {invitations: partie._id}});
+    
+    utilisateurModel.findOneAndUpdate({nom: req.body.nom1},{$push: {invitations: partie._id}});
+    
+    utilisateurModel.findOneAndUpdate({nom: req.body.nom2},{$push: {invitations: partie._id}});
+    
+    utilisateurModel.findOneAndUpdate({nom: req.body.nom3},{$push: {invitations: partie._id}});
+    
+    res.render('creerpartie_form',{nom: req.body.nom});
 });
 
 module.exports = router;

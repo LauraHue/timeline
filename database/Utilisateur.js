@@ -24,7 +24,7 @@ const UtilisateurSchema = new mongoose.Schema({
         }
     },
     main: [{ carte: Number }],
-    invitations: [Number]
+    invitations: [String]
 
 
 
