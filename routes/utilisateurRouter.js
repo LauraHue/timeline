@@ -22,10 +22,22 @@ var partieModel = require('../database/Partie');
 
 /*  Permet d'accepter une invitation   */
 router.get('/:id_utilisateur/parties/:id_partie', function(req, res,next){
-  partieModel.findByIdAndUpdate(req.params.id_partie,{$push: {invite: req.params.id_utilisateur}} ,function(err){
-    if (err){throw err;}
-  });
   
+  partieModel.findByIdAndUpdate(req.params.id_partie,{$push: {invites: req.params.id_utilisateur}}).exec(function(err,res){
+    if(err)
+    {
+        throw err;
+    }
+});
+
+  utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur,{$pull: {invitations: req.params.id_partie}}).exec(function(err,res){
+    if(err)
+    {
+        throw err;
+    }
+});
+
+res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
 });
 
 
@@ -50,7 +62,7 @@ router.get('/:id_utilisateur/parties', function (req, res, next) {
           // dans la console : Tue Dec 01 2020 10:27:49 GMT-0500 (heure normale de l’Est)object
         }
  
-        res.render('utilisateur_profil', { title: 'Timeline Online',nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
+        res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
       });
 
     }
