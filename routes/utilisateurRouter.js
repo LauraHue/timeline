@@ -22,7 +22,10 @@ var partieModel = require('../database/Partie');
 
 /*  Permet d'accepter une invitation   */
 router.get('/:id_utilisateur/parties/:id_partie', function(req, res,next){
-
+  partieModel.findByIdAndUpdate(req.params.id_partie,{$push: {invite: req.params.id_utilisateur}} ,function(err){
+    if (err){throw err;}
+  });
+  
 });
 
 

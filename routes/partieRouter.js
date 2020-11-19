@@ -34,6 +34,8 @@ router.post('/',function(req,res){
 
     partie.save();
 
+    console.log(partie._id)
+
     utilisateurModel.findOneAndUpdate({nom: req.body.nom},{$push: {invitations: partie._id}}).exec(function(err,res){
         if(err)
         {
