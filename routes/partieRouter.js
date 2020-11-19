@@ -34,13 +34,33 @@ router.post('/',function(req,res){
 
     partie.save();
 
-    utilisateurModel.findOneAndUpdate({nom: req.body.nom},{$push: {invitations: partie._id}});
+    utilisateurModel.findOneAndUpdate({nom: req.body.nom},{$push: {invitations: partie._id}}).exec(function(err,res){
+        if(err)
+        {
+            throw err;
+        }
+    });
     
-    utilisateurModel.findOneAndUpdate({nom: req.body.nom1},{$push: {invitations: partie._id}});
+    utilisateurModel.findOneAndUpdate({nom: req.body.nom1},{$push: {invitations: partie._id}}).exec(function(err,res){
+        if(err)
+        {
+            throw err;
+        }
+    });
     
-    utilisateurModel.findOneAndUpdate({nom: req.body.nom2},{$push: {invitations: partie._id}});
+    utilisateurModel.findOneAndUpdate({nom: req.body.nom2},{$push: {invitations: partie._id}}).exec(function(err,res){
+        if(err)
+        {
+            throw err;
+        }
+    });
     
-    utilisateurModel.findOneAndUpdate({nom: req.body.nom3},{$push: {invitations: partie._id}});
+    utilisateurModel.findOneAndUpdate({nom: req.body.nom3},{$push: {invitations: partie._id}}).exec(function(err,res){
+        if(err)
+        {
+            throw err;
+        }
+    });
     
     res.render('creerpartie_form',{nom: req.body.nom});
 });
