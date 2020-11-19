@@ -50,6 +50,7 @@ router.post('/',function(req,res){
     });
 
     partie.save();
+    res.render('creerpartie_form',{nom: res.nom});
 });
 
 module.exports = router;
