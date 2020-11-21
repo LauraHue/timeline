@@ -43,7 +43,7 @@ var validerSiCredencesVides = (req, res, next) => {
   if (courriel==="" || mdp==="") {
     return res.send({
       success: false,
-      message: "Obligatoire pour se connecter"
+      message: "Courriel et mot de passe Obligatoires pour se connecter"
     });
   }
   else {

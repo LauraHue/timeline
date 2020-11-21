@@ -47,7 +47,7 @@ router.post('/', middleware.validerCredencesVides, function (req, res) {
               //Création du token d'authentification
               var token = jwt.sign({ nom: utilisateur.nom }, secret.secret, { expiresIn: '24h' });
               res.setHeader('x-access-token', token);
-              res.send({ nom: utilisateur.nom, invitations: utilisateurModif.invitations });
+              res.send({ id:utilisateurModif.id,nom: utilisateurModif.nom, invitations: utilisateurModif.invitations });
               //res.redirect('utilisateurs/' + utilisateur.id + '/parties');
             }
           });
