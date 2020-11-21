@@ -9,7 +9,7 @@ var middleware = require('./middleware');
 // Mongoose
 var mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://admin:admin123@timeline.9e4sd.mongodb.net/timeline?retryWrites=true&w=majority',
- { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true,useFindAndModify: false });
+  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false });
 var db = mongoose.connection;
 
 // Vérifier la connection
@@ -23,31 +23,90 @@ var utilisateurModel = require('../database/Utilisateur');
 var partieModel = require('../database/Partie');
 
 
-/*  Permet d'accepter une invitation   */
-router.get('/:id_utilisateur/parties/:id_partie', function(req, res,next){
-  
-  partieModel.findByIdAndUpdate(req.params.id_partie,{$push: {invites: req.params.id_utilisateur}}).exec(function(err,res){
-    if(err)
-    {
-        throw err;
+/* POST : Créer une partie/des invitations */
+router.post('/:id_utilisateur/parties/:id_partie', middleware.validerNbJoueurs, function (req, res, next) {
+
+  //On va chercher l'utilisateur qui crée la partie afin de l'ajouter dans la partie
+  var id_createur = req.params.id_utilisateur;
+
+  utilisateurModel.findById(id_createur, function (err, createur) {
+    if (!err) {
+      var partie = new partieModel({
+        date: req.body.date,
+        invites: [createur.courriel],
+        pioches: [],
+        tapis: []
+      });
+
+      partie.save();
+      console.log(partie._id)
+
+      if (req.body.courriel1 !== "") {
+        utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel1 }, { $push: { invitations: partie._id } }).exec(function (err, res) {
+          if (err) {
+            throw err;
+          }
+        });
+      }
+      if (req.body.courriel2 !== "") {
+        utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel2 }, { $push: { invitations: partie._id } }).exec(function (err, res) {
+          if (err) {
+            throw err;
+          }
+        });
+      }
+      if (req.body.courriel3 !== "") {
+
+        utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel3 }, { $push: { invitations: partie._id } }).exec(function (err, res) {
+          if (err) {
+            throw err;
+          }
+        });
+
+      }
+
+
     }
 });
 
-  utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur,{$pull: {invitations: req.params.id_partie}}).exec(function(err,res){
-    if(err)
-    {
-        throw err;
-    }
-});
 
-res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
+});//Fin du POST
+
+
+/*  PUT : Permet d'accepter une invitation   */
+router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
+
+
+  //Puisque le joueur accepte la partie, la partie n'a plus besoin de se trouver dans le joueur
+  utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur, { $pull: { invitations: req.params.id_partie } }).exec(function (err, res) {
+    if (err) {
+      throw err;
+    }
+  });
+
+  //Met à jour à jour la partie acceptée en ajoutant le nom de l'utilisateur
+  //dans la partie
+  partieModel.findByIdAndUpdate(req.params.id_partie, { $push: { invites: req.params.id_utilisateur } }).exec(function (err, partieModif) {
+    if (err) {
+      throw err;
+    }
+    res.send({ partie: partieModif });
+  });
+
+
+
+  //res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
 });
 
 
 
 /* GET : Obtenir une représentation de toutes les parties de l'utilisateur*/
 router.get('/:id_utilisateur/parties', function (req, res, next) {
+
+  //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter
+  //dans la partie
   var id_utilisateur = req.params.id_utilisateur;
+
 
   utilisateurModel.findById(id_utilisateur, function (err, utilisateur) {
     if (err) {
@@ -64,7 +123,7 @@ router.get('/:id_utilisateur/parties', function (req, res, next) {
           //console.log(invitations[i].date + typeof(invitations[i].date));
           // dans la console : Tue Dec 01 2020 10:27:49 GMT-0500 (heure normale de l’Est)object
         }
-        res.send({id:utilisateur.id, invitations:invitations});
+        res.send({ id: utilisateur.id, nom: utilisateur.nom, invitations: invitations });
         //res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
       });
 
@@ -90,7 +149,7 @@ async function getParties(invitations) {
 // Fonction pour convertir la date et l'heure dans le format dd/mm/yy hh:mm
 function convertirDateTime(datetime) {
   var datetimeFormate = "blabla" + datetime.getDate() + "/" + datetime.getMonth() + "/" + datetime.getFullYear() + " " + datetime.getHours() + ":" + datetime.getMinutes();
- // console.log("date formatte : " + datetimeFormate);
+  // console.log("date formatte : " + datetimeFormate);
   //Dans la console : date formatte : 30/11/2020
   return datetimeFormate;
 }
