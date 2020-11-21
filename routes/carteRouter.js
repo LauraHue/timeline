@@ -51,7 +51,8 @@ router.post('/', function(req, res) {
       else{
         console.log("Enregistré!");
         console.log(carte._id);
-        res.render('creercarte_form');
+        //res.render('creercarte_form');
+        res.send({cue:carte.cue,show:carte.show,rep:carte.rep});
       }
     });
   });
