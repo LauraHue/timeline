@@ -3,6 +3,9 @@
 var express = require('express');
 var router = express.Router();
 
+//Middleware
+var middleware = require('./middleware');
+
 // Mongoose
 var mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://admin:admin123@timeline.9e4sd.mongodb.net/timeline?retryWrites=true&w=majority',

@@ -2,6 +2,8 @@
 
 var express = require('express');
 var router = express.Router();
+var jwt = require('jsonwebtoken');
+var secret = require('../secret');
 
 // Mongoose
 var mongoose = require('mongoose');
@@ -18,6 +20,7 @@ db.once("open", function () {
 // Les models
 var utilisateurModel = require('../database/Utilisateur');
 var partieModel = require('../database/Partie');
+
 
 /* Permet d'obtenir le formulaire de connexion*/
 router.get('/', function (req, res, next) {
@@ -52,6 +55,11 @@ router.post('/', function (req, res) {
               console.log("invitations mises à jour");
           });
 
+           //Création du token d'authentification
+           var token = jwt.sign({nom:utilisateur.nom}, secret.secret,{expiresIn:'24h'});
+           res.setHeader('x-access-token', token);
+          
+           
 
           res.redirect('utilisateurs/' + utilisateur.id + '/parties');
         },
