@@ -63,7 +63,9 @@ router.post('/:id_utilisateur/parties/:id_partie', middleware.validerNbJoueurs, 
           }
         });
 
-      }
+        res.send({partie:partie});
+
+      }//Fin du !err
 
 
     }
