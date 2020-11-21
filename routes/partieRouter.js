@@ -20,8 +20,10 @@ router.get('/',function(req,res){
       });
 });
 
-router.get('/:nom_utilisateur',function(req,res){
-    res.render('creerpartie_form',{nom: req.params.nom_utilisateur});
+router.get('/:id_partie',function(req,res){
+    partieModel.findById(req.params.id_partie, function(err,partie){
+        res.send({id:partie._id,invites:partie.invites});
+    });
 });
 
 router.post('/',function(req,res){
