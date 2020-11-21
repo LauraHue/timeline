@@ -59,9 +59,9 @@ router.post('/', function (req, res) {
            var token = jwt.sign({nom:utilisateur.nom}, secret.secret,{expiresIn:'24h'});
            res.setHeader('x-access-token', token);
           
-           
+           res.send({nom:utilisateur.nom});
 
-          res.redirect('utilisateurs/' + utilisateur.id + '/parties');
+          //res.redirect('utilisateurs/' + utilisateur.id + '/parties');
         },
         function (error) {
           console.log("err");
