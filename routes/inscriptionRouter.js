@@ -13,7 +13,7 @@ var db = mongoose.connection;
 //Vérifier la connection
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function () {
-  console.log("Connection Successful!");
+  console.log("Connection Successful dans le router Inscription");
 });
 
 
@@ -60,7 +60,7 @@ router.post('/', function (req, res) {
   });
 
   // Sauvegarde du model, exécution d'un callcback
-  utilisateur.save(function (err) {
+  utilisateur.save(function (err, utilisateur) {
     if (err) {
       if (err.name == 'ValidationError') {
         var erreursMessages = err.errors;
@@ -73,19 +73,10 @@ router.post('/', function (req, res) {
       //res.end(erreursMessages);
     }
     else {
-      console.log("Enregistré!");
-      res.end("utilisateur enregistré : " + utilisateur.nom);
+      res.send({id:utilisateur.id, nom:utilisateur.nom, courriel:utilisateur.courriel});
     }
-    db.close();
+ 
   });
-
-
-
-
-  // Si la validation est bonne, on connecte l'utilisateur et on renvoie sa page
-  //(on utilise une nouvelle ressource?? l'URL va changer)
-
-
 
 });
 module.exports = router;
