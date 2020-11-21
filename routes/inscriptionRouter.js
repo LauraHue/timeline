@@ -60,7 +60,7 @@ router.post('/', function (req, res) {
   });
 
   // Sauvegarde du model, exécution d'un callcback
-  utilisateur.save(function (err) {
+  utilisateur.save(function (err, utilisateur) {
     if (err) {
       if (err.name == 'ValidationError') {
         var erreursMessages = err.errors;
@@ -73,7 +73,7 @@ router.post('/', function (req, res) {
       //res.end(erreursMessages);
     }
     else {
-      res.redirect('connexion');
+      res.send({id:utilisateur.id, nom:utilisateur.nom, courriel:utilisateur.courriel});
     }
  
   });
