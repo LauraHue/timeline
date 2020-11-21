@@ -50,7 +50,7 @@ router.post('/', function (req, res) {
           console.log("après : " + utilisateur.invitations);
 
           // Mettre à jour l'utilisateur
-          utilisateurModel.findOneAndUpdate(utilisateur.id, { invitations: result }).exec(function (err) {
+          utilisateurModel.findOneAndUpdate(utilisateur.id, { invitations: result }).exec(function (err, utilisateurModif) {
             if (!err)
               console.log("invitations mises à jour");
           });
@@ -59,7 +59,7 @@ router.post('/', function (req, res) {
            var token = jwt.sign({nom:utilisateur.nom}, secret.secret,{expiresIn:'24h'});
            res.setHeader('x-access-token', token);
           
-           res.send({nom:utilisateur.nom});
+           res.send({nom:utilisateur.nom, invitations:utilisateurModif.invitations});
 
           //res.redirect('utilisateurs/' + utilisateur.id + '/parties');
         },
