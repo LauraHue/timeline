@@ -96,7 +96,7 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
     if (err) {
       throw err;
     }
-    res.send({ partie: partieModif });
+    res.send({ partie: partieModif,id_util: req.params.id_utilisateur, id_partie: req.id_partie });
   });
 
 
