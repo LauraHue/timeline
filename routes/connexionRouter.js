@@ -30,7 +30,7 @@ router.get('/', function (req, res, next) {
 router.post('/', middleware.validerCredencesVides, function (req, res) {
 
   //Si les crédences ne sont pas vides, on valide la combinaison courriel-mdp
-  utilisateurModel.findOne({ courriel: courriel, mdp: mdp }, function (err, utilisateur) {
+  utilisateurModel.findOne({ courriel: req.body.courriel, mdp: req.body.mdp }, function (err, utilisateur) {
 
     // Si l'utilisateur existe, on fait le ménage dans ses invitations
     if (!err && utilisateur) {

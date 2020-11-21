@@ -45,7 +45,7 @@ res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
 
 
 
-/* Permet de récupérer les parties de l'utilisateur*/
+/* GET : Obtenir une représentation de toutes les parties de l'utilisateur*/
 router.get('/:id_utilisateur/parties', function (req, res, next) {
   var id_utilisateur = req.params.id_utilisateur;
 
