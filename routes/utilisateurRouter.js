@@ -64,8 +64,8 @@ router.get('/:id_utilisateur/parties', function (req, res, next) {
           //console.log(invitations[i].date + typeof(invitations[i].date));
           // dans la console : Tue Dec 01 2020 10:27:49 GMT-0500 (heure normale de l’Est)object
         }
- 
-        res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
+        res.send({id:utilisateur.id, invitations:invitations});
+        //res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
       });
 
     }
