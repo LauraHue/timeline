@@ -34,7 +34,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/connexion', connexionRouter);
 app.use('/inscription', inscriptionRouter);
-app.use('/carte', carteRouter);
+app.use('/cartes', carteRouter);
 app.use('/utilisateurs', utilisateurRouter);
 app.use('/parties',partieRouter);
 
