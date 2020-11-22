@@ -17,7 +17,7 @@ var partieModel = require('../database/Partie');
 
 
 /* POST : Créer une partie/des invitations */
-router.post('/:id_utilisateur/parties', middleware.validerJoueurs, function (req, res, next) {
+router.post('/:id_utilisateur/parties', middleware.checkToken,middleware.validerJoueurs, function (req, res, next) {
 
   //On va chercher l'utilisateur qui crée la partie afin de l'ajouter dans la partie
   var id_createur = req.params.id_utilisateur;
