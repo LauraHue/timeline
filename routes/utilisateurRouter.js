@@ -78,8 +78,7 @@ router.post('/:id_utilisateur/parties', middleware.validerNbJoueurs, function (r
 
 
 /*  PUT : Permet d'accepter une invitation   */
-router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
-
+router.get('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 
   //Puisque le joueur accepte la partie, la partie n'a plus besoin de se trouver dans le joueur
   utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur, { $pull: { invitations: req.params.id_partie } }).exec(function (err, res) {
