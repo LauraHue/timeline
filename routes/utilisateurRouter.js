@@ -96,11 +96,13 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 
   //Met à jour à jour la partie acceptée en ajoutant le nom de l'utilisateur
   //dans la partie
-  partieModel.findByIdAndUpdate(req.params.id_partie, { $push: { invites: req.params.id_utilisateur } }).exec(function (err, partieModif) {
+  var partieModif;
+  
+  partieModel.findByIdAndUpdate(req.params.id_partie, partieModif ,{new: true}, { $push: { invites: req.params.id_utilisateur } }).exec(function (err, partieModif) {
     if (err) {
       throw err;
     }
-    res.send({ partie: partieModif });
+    res.send({ partie: partieModif,id_util: req.params.id_utilisateur, id_partie: req.id_partie });
   });
 
 
