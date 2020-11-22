@@ -67,26 +67,24 @@ router.post('/:id_utilisateur/parties', middleware.validerJoueurs, function (req
 /*  PUT : Permet d'accepter une invitation   */
 router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 
-
   //Puisque le joueur accepte la partie, la partie n'a plus besoin de se trouver dans le joueur
-  utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur, { $pull: { invitations: req.params.id_partie } }).exec(function (err, res) {
+  utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur, { $pull: { invitations: req.params.id_partie } },function (err, utilisateur){
     if (err) {
       throw err;
     }
-  });
-
-  //Met à jour à jour la partie acceptée en ajoutant le nom de l'utilisateur
-  //dans la partie
-  var partieModif;
-
-  partieModel.findByIdAndUpdate(req.params.id_partie, partieModif, { new: true }, { $push: { invites: req.params.id_utilisateur } }).exec(function (err, partieModif) {
-    if (err) {
-      throw err;
+    else{
+      //Met à jour à jour la partie acceptée en ajoutant le nom de l'utilisateur
+      //dans la partie
+      partieModel.findByIdAndUpdate(req.params.id_partie, { $push: { invites: utilisateur.courriel }},function (err, partie){
+        if (err) {
+        throw err;
+        }
+        else{
+          res.send({partie: partie});
+        }
+      });
     }
-    res.send({ partie: partieModif, id_util: req.params.id_utilisateur, id_partie: req.id_partie });
   });
-
-
 
   //res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
 });
@@ -114,21 +112,18 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
       var query = getParties(utilisateur.invitations);
 
       query.then(parties_toutes => {
-
         //Trouver les parties créées par l'utilisateur
-
-        console.log("courriel : "+ utilisateur.courriel);
-
-        partieModel.find({ invites: { $elemMach: utilisateur.courriel } }, function (err, parties) {
+        partieModel.find({ invites: { $elemMatch: utilisateur.courriel } }, function (err, parties) {
           if (!err && parties) {
             console.log("parties existent"+parties_toutes);
             for (var partie of parties) {
               parties_toutes.push(partie);
             }
+            
+          console.log(parties_toutes);
+          res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
           }
         });
-        console.log(parties_toutes);
-        res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
         //res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
       });
 
