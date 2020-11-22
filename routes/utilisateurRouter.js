@@ -33,26 +33,26 @@ router.post('/:id_utilisateur/parties', middleware.validerJoueurs, function (req
         tapis: []
       });
 
-     
+
       partie.save(function (err, partie) {
         if (!err) {
           //1 invité = 1 promesse
           var promises = [];
           for (var i = 0; i < courriels.length; i++) {
-            promises.push(utilisateurModel.findOneAndUpdate({courriel:courriels[i]}, {$push: { invitations: partie._id } }));
+            promises.push(utilisateurModel.findOneAndUpdate({ courriel: courriels[i] }, { $push: { invitations: partie._id } }));
           }
           //On résout toutes les promesses en parallèle
-          Promise.all(promises).then((results)=>{
+          Promise.all(promises).then((results) => {
             results.filter(result => !result);
             var invites = [];
             //La variable results contient les utilisateurs trouvés
-            results.forEach(r=>{
+            results.forEach(r => {
               invites.push(r.courriel);
             });
             console.log("Invitations envoyées!");
-            res.send({ partie: partie, invites:invites });
+            res.send({ partie: partie, invites: invites });
           });
-       
+
         }
       });//fin du save
 
@@ -91,10 +91,8 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 
 
 
-/* GET : Obtenir une représentation de toutes les parties de l'utilisateur
-(qu'il a crées +  celles où il est invité)*/
-router.get('/:id_utilisateur/parties',middleware.checkToken, function (req, res, next) {
-
+/* GET : Obtenir une représentation de toutes les parties de l'utilisateur*/
+router.get('/:id_utilisateur/parties', function (req, res, next) {
 
   //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter
   //dans la partie
@@ -112,18 +110,23 @@ router.get('/:id_utilisateur/parties',middleware.checkToken, function (req, res,
       var query = getParties(utilisateur.invitations);
 
       query.then(parties_toutes => {
+
+        console.log("1-courriel : "+ utilisateur.courriel);
+        console.log("2-les invitations" + parties_toutes);
+
         //Trouver les parties créées par l'utilisateur
-        partieModel.find({ invites: { $elemMatch: utilisateur.courriel } }, function (err, parties) {
+        partieModel.find({ "invites": { $elemMatch: {"$eq": utilisateur.courriel} } }, function (err, parties) {
           if (!err && parties) {
-            console.log(parties_toutes);
+            console.log("3-BBB" + parties_toutes);
             for (var partie of parties) {
               parties_toutes.push(partie);
             }
-            
-          console.log(parties_toutes);
-          res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
+
+            console.log("4-toutes les parties : "+parties_toutes);
+            res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
           }
         });
+       
         //res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
       });
 
@@ -131,8 +134,7 @@ router.get('/:id_utilisateur/parties',middleware.checkToken, function (req, res,
   });
 
 
-
-});
+});//Fin du GET
 
 // Fonction asynchrone pour aller chercher les parties dont l'id se trouve dans
 // l'utilisateur
