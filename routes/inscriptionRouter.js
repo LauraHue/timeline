@@ -10,14 +10,6 @@ mongoose.connect('mongodb+srv://admin:admin123@timeline.9e4sd.mongodb.net/timeli
  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true,useFindAndModify: false });
 
 var db = mongoose.connection;
-//Vérifier la connection
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", function () {
-  console.log("Connection Successful dans le router Inscription");
-});
-
-
-
 
 var utilisateurModel = require('../database/Utilisateur');
 
@@ -48,9 +40,6 @@ router.post('/', function (req, res) {
       }
     });
   }
-  //On vérifie si l'adresse courriel existe déjà dans la BD
-
-  //var utilisateurModel = mongoose.model('Utilisateur', utilisateurSchema);
 
   // Création d'une instance du model Utilisateur
   var utilisateur = new utilisateurModel({
@@ -69,8 +58,8 @@ router.post('/', function (req, res) {
         }
       }
 
-      res.render('signin_form', { title: 'Timeline Online', erreurs: erreursMessages });
-      //res.end(erreursMessages);
+      //res.render('signin_form', { title: 'Timeline Online', erreurs: erreursMessages });
+     res.send({erreurs:erreursMessages});
     }
     else {
       res.send({id:utilisateur._id, nom:utilisateur.nom, courriel:utilisateur.courriel});

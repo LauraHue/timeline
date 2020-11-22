@@ -1,5 +1,4 @@
 "use strict";
-
 var express = require('express');
 var router = express.Router();
 
@@ -12,19 +11,13 @@ mongoose.connect('mongodb+srv://admin:admin123@timeline.9e4sd.mongodb.net/timeli
   { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false });
 var db = mongoose.connection;
 
-// Vérifier la connection
-// db.on("error", console.error.bind(console, "connection error:"));
-// db.once("open", function () {
-//   console.log("Connexion réussie dans le router Utilisateur");
-// });
-
 // Les models
 var utilisateurModel = require('../database/Utilisateur');
 var partieModel = require('../database/Partie');
 
 
 /* POST : Créer une partie/des invitations */
-router.post('/:id_utilisateur/parties', middleware.validerNbJoueurs, function (req, res, next) {
+router.post('/:id_utilisateur/parties', middleware.validerJoueurs, function (req, res, next) {
 
   //On va chercher l'utilisateur qui crée la partie afin de l'ajouter dans la partie
   var id_createur = req.params.id_utilisateur;
@@ -41,17 +34,18 @@ router.post('/:id_utilisateur/parties', middleware.validerNbJoueurs, function (r
       });
 
      
-
       partie.save(function (err, partie) {
         if (!err) {
+          //1 invité = 1 promesse
           var promises = [];
           for (var i = 0; i < courriels.length; i++) {
             promises.push(utilisateurModel.findOneAndUpdate({courriel:courriels[i]}, {$push: { invitations: partie._id } }));
           }
-
+          //On résout toutes les promesses en parallèle
           Promise.all(promises).then((results)=>{
             results.filter(result => !result);
             var invites = [];
+            //La variable results contient les utilisateurs trouvés
             results.forEach(r=>{
               invites.push(r.courriel);
             });
@@ -101,7 +95,7 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 
 /* GET : Obtenir une représentation de toutes les parties de l'utilisateur
 (qu'il a crées +  celles où il est invité)*/
-router.get('/:id_utilisateur/parties', function (req, res, next) {
+router.get('/:id_utilisateur/parties',middleware.checkToken, function (req, res, next) {
 
 
   //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter

@@ -3,7 +3,6 @@ const secret = require('../secret.js');
 
 // Les models
 var utilisateurModel = require('../database/Utilisateur');
-var partieModel = require('../database/Partie');
 
 // Sert à authentifier l'utilisateur lorsqu'il demande une page. Seuls les
 // utilisateurs authentifier peuvent accéder aux ressources du site (sauf)
@@ -37,7 +36,8 @@ var checkToken = (req, res, next) => {
   }
 };
 
-//Est utilisé lors du retour du formulaire de connexion
+//Est utilisé afin de s'assurer que les crédences ne sont pas vides. Il est 
+//inutile de faire une requête à la BD si un input est manquant
 var validerSiCredencesVides = (req, res, next) => {
   // Vérifier si les crédences de l'utilisateur sont vides
   var courriel = req.body.courriel.trim();
@@ -57,17 +57,16 @@ var validerSiCredencesVides = (req, res, next) => {
   }
 };
 
-//Est utilisé lors de la création d'une partie/d'invitations
-var validerNbJoueurs = (req, res, next) => {
+//Est utilisé lors de la création d'une partie/d'invitations afin de valider
+//les courriels. On ne veut pas insérer des courriels invalides dans la BD
+var validerJoueurs = (req, res, next) => {
   //Possibilité d'inviter 3 joueurs
   var courriel1 = req.body.courriel1.trim();
   var courriel2 = req.body.courriel2.trim();
   var courriel3 = req.body.courriel3.trim();
 
-  console.log("courriel 1 = " + courriel1);
-  console.log("courriel 2 = " + courriel2);
-  console.log("courriel 3 = " + courriel3);
-
+  //Si le courriel n'est pas vide, on l'ajoute dans le tableau des courriels
+  //à valider
   var courriels = [];
   if (courriel1 !== "")
     courriels.push(courriel1);
@@ -76,51 +75,40 @@ var validerNbJoueurs = (req, res, next) => {
   if (courriel3 !== "")
     courriels.push(courriel3);
 
+  //Le nombre de courriels non-vides doit être au minimum de 1 puisque
+  //le nombre minimal de joueur est de 2 (créateur + 1 invité)
   if (courriels.length < 1) {
     return res.send({
       success: false,
       message: "Il faut inviter au moins 1 joueur."
     });
   }
-  else {
-    //On valide les adresses courriel
-    //   var valide=true;
-    //   var i =0;
-
-    // do{
-    //   await utilisateurModel.findOne({courriel:courrielcourriels[i]}).exec();
-    // }while(valide);
-
-
-
-    //On peut passer à la création de la partie/des invitations
-    // req.body.courriel1 = courriel1;
-    // req.body.courriel2 = courriel2;
-    // req.body.courriel3 = courriel3;
-
-    var promises = [];
-    console.log("juste avant le for, size = " + courriels.length);
-    console.log(courriels);
-
+  else { 
+    //1 validation = 1 promesse
+    var promises = []; 
     for (var i = 0; i < courriels.length; i++) {
       console.log(courriels[i]);
       promises.push(utilisateurModel.findOne({ courriel: courriels[i] }));
     }
-
+    //On résout toutes les promesses en parallèle
     Promise.all(promises).then(
       (results) => {
-        //results = results.filter(result => result);
+       
         var courrielsValides = [];
         var valide = true;
         var i=0;
+        //La variable results est un tableau contenant les résultats. Si un des
+        //résultats est null, ça signifie qu'un des courriels est invalide et
+        //on arrête tout.
         do {
-          console.log(results[i]);
+          
           if (results[i] === null) {
             valide = false;
           }
           i++;
         } while (valide===true && i<results.length);
 
+        //Tous les courriels sont valides, on passe à l'étape suivante
         if (valide ===true) {
           results.forEach(r => {
             courrielsValides.push(r.courriel);
@@ -147,11 +135,9 @@ var validerNbJoueurs = (req, res, next) => {
 };
 
 
-
-
 module.exports = {
   checkToken: checkToken,
   validerCredencesVides: validerSiCredencesVides,
-  validerNbJoueurs: validerNbJoueurs
+  validerJoueurs: validerJoueurs
 
 }
