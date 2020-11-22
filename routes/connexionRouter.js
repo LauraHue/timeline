@@ -42,12 +42,12 @@ router.post('/', middleware.validerCredencesVides, function (req, res) {
           utilisateur.invitations = result;
 
           // Mettre à jour l'utilisateur
-          utilisateurModel.findOneAndUpdate(utilisateur.id, { invitations: result }).exec(function (err, utilisateurModif) {
+          utilisateurModel.findOneAndUpdate({_id:utilisateur._id},  { invitations: result }).exec(function (err, utilisateurModif) {
             if (!err) {
               //Création du token d'authentification
               var token = jwt.sign({ nom: utilisateur.nom }, secret.secret, { expiresIn: '24h' });
               res.setHeader('x-access-token', token);
-              res.send({ id:utilisateurModif.id,nom: utilisateurModif.nom, invitations: utilisateurModif.invitations });
+              res.send({ id:utilisateurModif._id,nom: utilisateurModif.nom, invitations: utilisateurModif.invitations });
               //res.redirect('utilisateurs/' + utilisateur.id + '/parties');
             }
           });
@@ -81,7 +81,7 @@ async function retirerInvitationsPerimees(utilisateur) {
         //console.log("partie pushée" + partie.id);
       }
       else {
-        console.log("La partie" + partie.id + "est périmée ou n'existe pas");
+        console.log("La partie" + id_partie+ "est périmée ou n'existe pas");
       }
     });
 

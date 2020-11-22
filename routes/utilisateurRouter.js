@@ -1,5 +1,4 @@
 "use strict";
-
 var express = require('express');
 var router = express.Router();
 
@@ -12,66 +11,54 @@ mongoose.connect('mongodb+srv://admin:admin123@timeline.9e4sd.mongodb.net/timeli
   { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false });
 var db = mongoose.connection;
 
-// Vérifier la connection
-// db.on("error", console.error.bind(console, "connection error:"));
-// db.once("open", function () {
-//   console.log("Connexion réussie dans le router Utilisateur");
-// });
-
 // Les models
 var utilisateurModel = require('../database/Utilisateur');
 var partieModel = require('../database/Partie');
 
 
 /* POST : Créer une partie/des invitations */
-router.post('/:id_utilisateur/parties', middleware.validerNbJoueurs, function (req, res, next) {
+router.post('/:id_utilisateur/parties', middleware.validerJoueurs, function (req, res, next) {
 
   //On va chercher l'utilisateur qui crée la partie afin de l'ajouter dans la partie
   var id_createur = req.params.id_utilisateur;
+  var courriels = req.courriels;
 
   utilisateurModel.findById(id_createur, function (err, createur) {
     if (!err) {
+      var invites = [createur.courriel];
       var partie = new partieModel({
         date: req.body.date,
-        invites: [createur.courriel],
+        invites: invites,
         pioches: [],
         tapis: []
       });
 
+     
       partie.save(function (err, partie) {
-
         if (!err) {
-          if (req.body.courriel1 !== "") {
-            utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel1 }, { $push: { invitations: partie._id } }).exec(function (err, invite1) {
-              if (!err && invite1)
-                res.send({ message: "L'adresse courriel de l'invité 1 n'existe pas." });
-            });
+          //1 invité = 1 promesse
+          var promises = [];
+          for (var i = 0; i < courriels.length; i++) {
+            promises.push(utilisateurModel.findOneAndUpdate({courriel:courriels[i]}, {$push: { invitations: partie._id } }));
           }
+          //On résout toutes les promesses en parallèle
+          Promise.all(promises).then((results)=>{
+            results.filter(result => !result);
+            var invites = [];
+            //La variable results contient les utilisateurs trouvés
+            results.forEach(r=>{
+              invites.push(r.courriel);
+            });
+            console.log("Invitations envoyées!");
+            res.send({ partie: partie, invites:invites });
+          });
+       
         }
       });//fin du save
 
 
-
-      if (req.body.courriel2 !== "") {
-        utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel2 }, { $push: { invitations: partie._id } }).exec(function (err, invite2) {
-          if (!err && invite2)
-            res.send({ message: "L'adresse courriel de l'invité 2 n'existe pas." });
-        });
-      }
-      if (req.body.courriel3 !== "") {
-
-        utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel3 }, { $push: { invitations: partie._id } }).exec(function (err, invite3) {
-          if (!err && invite3)
-            res.send({ message: "L'adresse courriel de l'invité 3 n'existe pas." });
-        });
-
-        res.send({ partie: partie });
-
-      }//Fin du !err
-
-
     }
-  });
+  });//Fin du findBy
 
 
 });//Fin du POST
@@ -104,8 +91,10 @@ router.get('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 
 
 
-/* GET : Obtenir une représentation de toutes les parties de l'utilisateur*/
-router.get('/:id_utilisateur/parties', function (req, res, next) {
+/* GET : Obtenir une représentation de toutes les parties de l'utilisateur
+(qu'il a crées +  celles où il est invité)*/
+router.get('/:id_utilisateur/parties',middleware.checkToken, function (req, res, next) {
+
 
   //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter
   //dans la partie
@@ -117,22 +106,30 @@ router.get('/:id_utilisateur/parties', function (req, res, next) {
       console.log(err);
     }
     else if (utilisateur != null) {
-
+      console.log("pas d'erreur");
+      //Promesse dans laquelle se trouve parties auxquelles l'utilisateur est
+      ///invité (et qu'il n'a pas encore acceptées)
       var query = getParties(utilisateur.invitations);
 
-      query.then(invitations => {
-        for (var i = 0; i < invitations.length; i++) {
-          invitations[i].date = new String(convertirDateTime(invitations[i].date));
-          //invitations[i].date = convertirDateTime(invitations[i].date);
-          //console.log(invitations[i].date + typeof(invitations[i].date));
-          // dans la console : Tue Dec 01 2020 10:27:49 GMT-0500 (heure normale de l’Est)object
-        }
-        res.send({ id: utilisateur.id, nom: utilisateur.nom, invitations: invitations });
+      query.then(parties_toutes => {
+
+        //Trouver les parties créées par l'utilisateur
+        partieModel.find({ invites: { $elemMach: utilisateur.courriel } }, function (err, parties) {
+          if (!err && parties) {
+            console.log(parties_toutes);
+            for (var partie of parties) {
+              parties_toutes.push(partie);
+            }
+          }
+        });
+        console.log(parties_toutes);
+        res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
         //res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
       });
 
     }
   });
+
 
 
 });
