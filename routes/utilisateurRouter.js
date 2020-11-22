@@ -75,7 +75,7 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
     else{
       //Met à jour à jour la partie acceptée en ajoutant le nom de l'utilisateur
       //dans la partie
-      partieModel.findByIdAndUpdate(req.params.id_partie, { $push: { invites: utilisateur.courriel }},function (err, partie){
+      partieModel.findByIdAndUpdate(req.params.id_partie, { $push: { invites: utilisateur.courriel }},{new: true},function (err, partie){
         if (err) {
         throw err;
         }
