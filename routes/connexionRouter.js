@@ -47,7 +47,7 @@ router.post('/', middleware.validerCredencesVides, function (req, res) {
               //Création du token d'authentification
               var token = jwt.sign({ nom: utilisateur.nom }, secret.secret, { expiresIn: '24h' });
               res.setHeader('x-access-token', token);
-              res.send({ id:utilisateurModif.id,nom: utilisateurModif.nom, invitations: utilisateurModif.invitations });
+              res.send({ id:utilisateurModif._id,nom: utilisateurModif.nom, invitations: utilisateurModif.invitations });
               //res.redirect('utilisateurs/' + utilisateur.id + '/parties');
             }
           });
@@ -81,7 +81,7 @@ async function retirerInvitationsPerimees(utilisateur) {
         //console.log("partie pushée" + partie.id);
       }
       else {
-        console.log("La partie" + partie.id + "est périmée ou n'existe pas");
+        console.log("La partie" + partie._id + "est périmée ou n'existe pas");
       }
     });
 

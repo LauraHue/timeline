@@ -73,7 +73,7 @@ router.post('/', function (req, res) {
       //res.end(erreursMessages);
     }
     else {
-      res.send({id:utilisateur.id, nom:utilisateur.nom, courriel:utilisateur.courriel});
+      res.send({id:utilisateur._id, nom:utilisateur.nom, courriel:utilisateur.courriel});
     }
  
   });

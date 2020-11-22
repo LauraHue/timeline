@@ -99,8 +99,10 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 
 
 
-/* GET : Obtenir une représentation de toutes les parties de l'utilisateur*/
+/* GET : Obtenir une représentation de toutes les parties de l'utilisateur
+(qu'il a crées +  celles où il est invité)*/
 router.get('/:id_utilisateur/parties', function (req, res, next) {
+
 
   //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter
   //dans la partie
@@ -112,22 +114,30 @@ router.get('/:id_utilisateur/parties', function (req, res, next) {
       console.log(err);
     }
     else if (utilisateur != null) {
-
+      console.log("pas d'erreur");
+      //Promesse dans laquelle se trouve parties auxquelles l'utilisateur est
+      ///invité (et qu'il n'a pas encore acceptées)
       var query = getParties(utilisateur.invitations);
 
-      query.then(invitations => {
-        for (var i = 0; i < invitations.length; i++) {
-          invitations[i].date = new String(convertirDateTime(invitations[i].date));
-          //invitations[i].date = convertirDateTime(invitations[i].date);
-          //console.log(invitations[i].date + typeof(invitations[i].date));
-          // dans la console : Tue Dec 01 2020 10:27:49 GMT-0500 (heure normale de l’Est)object
-        }
-        res.send({ id: utilisateur.id, nom: utilisateur.nom, invitations: invitations });
+      query.then(parties_toutes => {
+
+        //Trouver les parties créées par l'utilisateur
+        partieModel.find({ invites: { $elemMach: utilisateur.courriel } }, function (err, parties) {
+          if (!err && parties) {
+            console.log(parties_toutes);
+            for (var partie of parties) {
+              parties_toutes.push(partie);
+            }
+          }
+        });
+        console.log(parties_toutes);
+        res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
         //res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
       });
 
     }
   });
+
 
 
 });
