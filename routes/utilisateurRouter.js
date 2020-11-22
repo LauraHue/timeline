@@ -68,23 +68,22 @@ router.post('/:id_utilisateur/parties', middleware.validerJoueurs, function (req
 router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 
   //Puisque le joueur accepte la partie, la partie n'a plus besoin de se trouver dans le joueur
-  utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur, { $pull: { invitations: req.params.id_partie } }).exec(function (err, utilisateur) {
+  utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur, { $pull: { invitations: req.params.id_partie } },function (err, utilisateur){
     if (err) {
       throw err;
     }
     else{
       //Met à jour à jour la partie acceptée en ajoutant le nom de l'utilisateur
       //dans la partie
-      partieModel.findByIdAndUpdate(req.params.id_partie, { $push: { invites: utilisateur.courriel } }).exec(function (err, res) {
+      partieModel.findByIdAndUpdate(req.params.id_partie, { $push: { invites: utilisateur.courriel }},function (err, partie){
         if (err) {
         throw err;
         }
+        else{
+          res.send({partie: partie,courriel: utilisateur.courriel, id_partie: req.id_partie });
+        }
       });
     }
-  });
-
-  partieModel.findById(req.params.id_partie, function(err,partie){
-    res.send({partie: partie,id_util: req.params.id_utilisateur, id_partie: req.id_partie });
   });
 
   //res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
