@@ -11,7 +11,6 @@ var jwt = require('jsonwebtoken');
 
 // Création des handlers
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var connexionRouter = require('./routes/connexionRouter');
 var inscriptionRouter = require('./routes/inscriptionRouter');
 var carteRouter = require('./routes/carteRouter');
@@ -31,7 +30,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Relie les URI aux handlers
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/connexion', connexionRouter);
 app.use('/inscription', inscriptionRouter);
 app.use('/cartes', carteRouter);

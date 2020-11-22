@@ -1,3 +1,5 @@
+"use strict";
+
 var jwt = require('jsonwebtoken');
 const secret = require('../secret.js');
 
