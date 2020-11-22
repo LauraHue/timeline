@@ -3,14 +3,18 @@
 var express = require('express');
 var router = express.Router();
 
+//Middleware
+var middleware = require('./middleware');
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://admin:admin123@timeline.9e4sd.mongodb.net/timeline?retryWrites=true&w=majority',
  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true,useFindAndModify: false });
 const db = mongoose.connection;
 
+//Models
 var carteModel = require('../database/Carte');
-router.get('/',function(req,res){
+
+router.get('/',middleware.checkToken, function(req,res){
    if(req.body.id == null)
    {
     carteModel.find(null, function(err,cartes){
@@ -20,7 +24,7 @@ router.get('/',function(req,res){
    }
 });
 
-router.get('/creer',function(req,res){
+router.get('/creer',middleware.checkToken,function(req,res){
   res.render('creercarte_form');
 });
 
@@ -36,7 +40,7 @@ router.get('/:id_carte',function(req, res){
   });
 });
 
-router.post('/', function(req, res) {
+router.post('/', middleware.checkToken,function(req, res) {
     var carte = new carteModel({   
       cue:req.body.cue,
       show:req.body.show,
