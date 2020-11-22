@@ -42,7 +42,7 @@ router.post('/', middleware.validerCredencesVides, function (req, res) {
           utilisateur.invitations = result;
 
           // Mettre à jour l'utilisateur
-          utilisateurModel.findOneAndUpdate(utilisateur.id, { invitations: result }).exec(function (err, utilisateurModif) {
+          utilisateurModel.findOneAndUpdate({_id:utilisateur._id},  { invitations: result }).exec(function (err, utilisateurModif) {
             if (!err) {
               //Création du token d'authentification
               var token = jwt.sign({ nom: utilisateur.nom }, secret.secret, { expiresIn: '24h' });

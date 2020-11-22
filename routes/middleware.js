@@ -60,9 +60,9 @@ var validerSiCredencesVides = (req, res, next) => {
 //Est utilisé lors de la création d'une partie/d'invitations
 var validerNbJoueurs = (req, res, next) => {
   //Possibilité d'inviter 3 joueurs
-  var courriel1 = req.body.courriel1.trim();
-  var courriel2 = req.body.courriel2.trim();
-  var courriel3 = req.body.courriel3.trim();
+  var courriel1 = trimmer(req.body.courriel1);
+  var courriel2 = trimmer(req.body.courriel2);
+  var courriel3 = trimmer(req.body.courriel3);
 
 
   var courriels = [];
@@ -89,7 +89,6 @@ var validerNbJoueurs = (req, res, next) => {
   }
 
 };
-
 
 
 module.exports = {

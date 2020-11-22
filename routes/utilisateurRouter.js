@@ -43,31 +43,37 @@ router.post('/:id_utilisateur/parties', middleware.validerNbJoueurs, function (r
         if (!err) {
           if (req.body.courriel1 !== "") {
             utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel1 }, { $push: { invitations: partie._id } }).exec(function (err, invite1) {
-              if (!err && invite1)
+              console.log("dans invite1");
+              if (!err && !invite1) {
                 res.send({ message: "L'adresse courriel de l'invité 1 n'existe pas." });
+              }
+
+
             });
           }
+          res.send({ partie: partie });
         }
       });//fin du save
 
 
 
-      if (req.body.courriel2 !== "") {
-        utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel2 }, { $push: { invitations: partie._id } }).exec(function (err, invite2) {
-          if (!err && invite2)
-            res.send({ message: "L'adresse courriel de l'invité 2 n'existe pas." });
-        });
-      }
-      if (req.body.courriel3 !== "") {
+      // if (req.body.courriel2 !== "") {
+      //   utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel2 }, { $push: { invitations: partie._id } }).exec(function (err, invite2) {
+      //     console.log("dans invite2");
+      //     if (!err && !invite2)
+      //       res.send({ message: "L'adresse courriel de l'invité 2 n'existe pas." });
+      //   });
+      // }
+      // if (req.body.courriel3 !== "") {
+      //   console.log("dans invite3");
+      //   utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel3 }, { $push: { invitations: partie._id } }).exec(function (err, invite3) {
+      //     if (!err && !invite3)
+      //       res.send({ message: "L'adresse courriel de l'invité 3 n'existe pas." });
+      //   });
 
-        utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel3 }, { $push: { invitations: partie._id } }).exec(function (err, invite3) {
-          if (!err && invite3)
-            res.send({ message: "L'adresse courriel de l'invité 3 n'existe pas." });
-        });
 
-        res.send({ partie: partie });
 
-      }//Fin du !err
+      // }
 
 
     }
