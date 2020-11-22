@@ -33,26 +33,26 @@ router.post('/:id_utilisateur/parties', middleware.validerJoueurs, function (req
         tapis: []
       });
 
-     
+
       partie.save(function (err, partie) {
         if (!err) {
           //1 invité = 1 promesse
           var promises = [];
           for (var i = 0; i < courriels.length; i++) {
-            promises.push(utilisateurModel.findOneAndUpdate({courriel:courriels[i]}, {$push: { invitations: partie._id } }));
+            promises.push(utilisateurModel.findOneAndUpdate({ courriel: courriels[i] }, { $push: { invitations: partie._id } }));
           }
           //On résout toutes les promesses en parallèle
-          Promise.all(promises).then((results)=>{
+          Promise.all(promises).then((results) => {
             results.filter(result => !result);
             var invites = [];
             //La variable results contient les utilisateurs trouvés
-            results.forEach(r=>{
+            results.forEach(r => {
               invites.push(r.courriel);
             });
             console.log("Invitations envoyées!");
-            res.send({ partie: partie, invites:invites });
+            res.send({ partie: partie, invites: invites });
           });
-       
+
         }
       });//fin du save
 
@@ -78,12 +78,12 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
   //Met à jour à jour la partie acceptée en ajoutant le nom de l'utilisateur
   //dans la partie
   var partieModif;
-  
-  partieModel.findByIdAndUpdate(req.params.id_partie, partieModif ,{new: true}, { $push: { invites: req.params.id_utilisateur } }).exec(function (err, partieModif) {
+
+  partieModel.findByIdAndUpdate(req.params.id_partie, partieModif, { new: true }, { $push: { invites: req.params.id_utilisateur } }).exec(function (err, partieModif) {
     if (err) {
       throw err;
     }
-    res.send({ partie: partieModif,id_util: req.params.id_utilisateur, id_partie: req.id_partie });
+    res.send({ partie: partieModif, id_util: req.params.id_utilisateur, id_partie: req.id_partie });
   });
 
 
@@ -95,7 +95,7 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 
 /* GET : Obtenir une représentation de toutes les parties de l'utilisateur
 (qu'il a crées +  celles où il est invité)*/
-router.get('/:id_utilisateur/parties',middleware.checkToken, function (req, res, next) {
+router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res, next) {
 
 
   //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter
@@ -116,9 +116,12 @@ router.get('/:id_utilisateur/parties',middleware.checkToken, function (req, res,
       query.then(parties_toutes => {
 
         //Trouver les parties créées par l'utilisateur
+
+        console.log("courriel : "+ utilisateur.courriel);
+
         partieModel.find({ invites: { $elemMach: utilisateur.courriel } }, function (err, parties) {
           if (!err && parties) {
-            console.log(parties_toutes);
+            console.log("parties existent"+parties_toutes);
             for (var partie of parties) {
               parties_toutes.push(partie);
             }
