@@ -81,7 +81,7 @@ async function retirerInvitationsPerimees(utilisateur) {
         //console.log("partie pushée" + partie.id);
       }
       else {
-        console.log("La partie" + partie._id + "est périmée ou n'existe pas");
+        console.log("La partie" + id_partie+ "est périmée ou n'existe pas");
       }
     });
 
