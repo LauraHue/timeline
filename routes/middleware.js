@@ -60,17 +60,20 @@ var validerSiCredencesVides = (req, res, next) => {
 //Est utilisé lors de la création d'une partie/d'invitations
 var validerNbJoueurs = (req, res, next) => {
   //Possibilité d'inviter 3 joueurs
-  var courriel1 = trimmer(req.body.courriel1);
-  var courriel2 = trimmer(req.body.courriel2);
-  var courriel3 = trimmer(req.body.courriel3);
+  var courriel1 = req.body.courriel1.trim();
+  var courriel2 = req.body.courriel2.trim();
+  var courriel3 = req.body.courriel3.trim();
 
+  console.log("courriel 1 = " + courriel1);
+  console.log("courriel 2 = " + courriel2);
+  console.log("courriel 3 = " + courriel3);
 
   var courriels = [];
   if (courriel1 !== "")
     courriels.push(courriel1);
-  else if (courriel2 !== "")
+  if (courriel2 !== "")
     courriels.push(courriel2);
-  else if (courriel3 !== "")
+  if (courriel3 !== "")
     courriels.push(courriel3);
 
   if (courriels.length < 1) {
@@ -80,15 +83,70 @@ var validerNbJoueurs = (req, res, next) => {
     });
   }
   else {
-    //On peut passer à la création de la partie/des invitations
-    req.body.courriel1 = courriel1;
-    req.body.courriel2 = courriel2;
-    req.body.courriel3 = courriel3;
+    //On valide les adresses courriel
+    //   var valide=true;
+    //   var i =0;
 
-    next();
+    // do{
+    //   await utilisateurModel.findOne({courriel:courrielcourriels[i]}).exec();
+    // }while(valide);
+
+
+
+    //On peut passer à la création de la partie/des invitations
+    // req.body.courriel1 = courriel1;
+    // req.body.courriel2 = courriel2;
+    // req.body.courriel3 = courriel3;
+
+    var promises = [];
+    console.log("juste avant le for, size = " + courriels.length);
+    console.log(courriels);
+
+    for (var i = 0; i < courriels.length; i++) {
+      console.log(courriels[i]);
+      promises.push(utilisateurModel.findOne({ courriel: courriels[i] }));
+    }
+
+    Promise.all(promises).then(
+      (results) => {
+        //results = results.filter(result => result);
+        var courrielsValides = [];
+        var valide = true;
+        var i=0;
+        do {
+          console.log(results[i]);
+          if (results[i] === null) {
+            valide = false;
+          }
+          i++;
+        } while (valide===true && i<results.length);
+
+        if (valide ===true) {
+          results.forEach(r => {
+            courrielsValides.push(r.courriel);
+          });
+          req.courriels = courrielsValides;
+          next();
+        }
+        else {
+          return res.send({
+            success: false,
+            message: "Au moins 1 courriel est invalide."
+          });
+        }
+
+
+      },
+      (errors) => {
+        console.log(errors);
+      });
+
+
   }
 
 };
+
+
 
 
 module.exports = {

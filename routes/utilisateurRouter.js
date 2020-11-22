@@ -28,56 +28,39 @@ router.post('/:id_utilisateur/parties', middleware.validerNbJoueurs, function (r
 
   //On va chercher l'utilisateur qui crée la partie afin de l'ajouter dans la partie
   var id_createur = req.params.id_utilisateur;
+  var courriels = req.courriels;
 
   utilisateurModel.findById(id_createur, function (err, createur) {
     if (!err) {
+      var invites = [createur.courriel];
       var partie = new partieModel({
         date: req.body.date,
-        invites: [createur.courriel],
+        invites: invites,
         pioches: [],
         tapis: []
       });
 
+     
+
       partie.save(function (err, partie) {
-
         if (!err) {
-          if (req.body.courriel1 !== "") {
-            utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel1 }, { $push: { invitations: partie._id } }).exec(function (err, invite1) {
-              console.log("dans invite1");
-              if (!err && !invite1) {
-                res.send({ message: "L'adresse courriel de l'invité 1 n'existe pas." });
-              }
-
-
-            });
+          var promises = [];
+          for (var i = 0; i < courriels.length; i++) {
+            promises.push(utilisateurModel.findOneAndUpdate({courriel:courriels[i]}, {$push: { invitations: partie._id } }));
           }
-          res.send({ partie: partie });
+
+          Promise.all(promises).then((results)=>{
+            results.filter(result => !result);
+            console.log("Invitations envoyées!");
+            res.send({ partie: partie });
+          });
+       
         }
       });//fin du save
 
 
-
-      // if (req.body.courriel2 !== "") {
-      //   utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel2 }, { $push: { invitations: partie._id } }).exec(function (err, invite2) {
-      //     console.log("dans invite2");
-      //     if (!err && !invite2)
-      //       res.send({ message: "L'adresse courriel de l'invité 2 n'existe pas." });
-      //   });
-      // }
-      // if (req.body.courriel3 !== "") {
-      //   console.log("dans invite3");
-      //   utilisateurModel.findOneAndUpdate({ courriel: req.body.courriel3 }, { $push: { invitations: partie._id } }).exec(function (err, invite3) {
-      //     if (!err && !invite3)
-      //       res.send({ message: "L'adresse courriel de l'invité 3 n'existe pas." });
-      //   });
-
-
-
-      // }
-
-
     }
-  });
+  });//Fin du findBy
 
 
 });//Fin du POST
