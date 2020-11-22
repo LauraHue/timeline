@@ -51,8 +51,12 @@ router.post('/:id_utilisateur/parties', middleware.validerNbJoueurs, function (r
 
           Promise.all(promises).then((results)=>{
             results.filter(result => !result);
+            var invites = [];
+            results.forEach(r=>{
+              invites.push(r.courriel);
+            });
             console.log("Invitations envoyées!");
-            res.send({ partie: partie });
+            res.send({ partie: partie, invites:invites });
           });
        
         }
