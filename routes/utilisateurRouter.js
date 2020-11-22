@@ -80,7 +80,7 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
         throw err;
         }
         else{
-          res.send({partie: partie,courriel: utilisateur.courriel, id_partie: req.id_partie });
+          res.send({partie: partie});
         }
       });
     }
