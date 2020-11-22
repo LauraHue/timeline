@@ -65,20 +65,21 @@ router.post('/:id_utilisateur/parties', middleware.validerJoueurs, function (req
 
 
 /*  PUT : Permet d'accepter une invitation   */
-router.get('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
+router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 
   //Puisque le joueur accepte la partie, la partie n'a plus besoin de se trouver dans le joueur
-  utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur, { $pull: { invitations: req.params.id_partie } }).exec(function (err, res) {
+  utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur, { $pull: { invitations: req.params.id_partie } }).exec(function (err, utilisateur) {
     if (err) {
       throw err;
     }
-  });
-
-  //Met à jour à jour la partie acceptée en ajoutant le nom de l'utilisateur
-  //dans la partie
-  partieModel.findByIdAndUpdate(req.params.id_partie, { $push: { invites: req.params.id_utilisateur } }).exec(function (err, res) {
-    if (err) {
-      throw err;
+    else{
+      //Met à jour à jour la partie acceptée en ajoutant le nom de l'utilisateur
+      //dans la partie
+      partieModel.findByIdAndUpdate(req.params.id_partie, { $push: { invites: utilisateur.courriel } }).exec(function (err, res) {
+        if (err) {
+        throw err;
+        }
+      });
     }
   });
 
@@ -112,18 +113,18 @@ router.get('/:id_utilisateur/parties',middleware.checkToken, function (req, res,
       var query = getParties(utilisateur.invitations);
 
       query.then(parties_toutes => {
-
         //Trouver les parties créées par l'utilisateur
-        partieModel.find({ invites: { $elemMach: utilisateur.courriel } }, function (err, parties) {
+        partieModel.find({ invites: { $elemMatch: utilisateur.courriel } }, function (err, parties) {
           if (!err && parties) {
             console.log(parties_toutes);
             for (var partie of parties) {
               parties_toutes.push(partie);
             }
+            
+          console.log(parties_toutes);
+          res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
           }
         });
-        console.log(parties_toutes);
-        res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
         //res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
       });
 
