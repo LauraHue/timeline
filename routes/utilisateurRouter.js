@@ -103,27 +103,25 @@ router.get('/:id_utilisateur/parties', function (req, res, next) {
     if (err) {
       console.log(err);
     }
-    else if (utilisateur != null) {
-      console.log("pas d'erreur");
-      //Promesse dans laquelle se trouve parties auxquelles l'utilisateur est
-      ///invité (et qu'il n'a pas encore acceptées)
+    else if (utilisateur != null) { 
+      //Promesse dans laquelle se trouve les parties auxquelles l'utilisateur est
+      //invité (et qu'il n'a pas encore acceptées)
       var query = getParties(utilisateur.invitations);
 
-      query.then(parties_toutes => {
-
-        console.log("1-courriel : "+ utilisateur.courriel);
-        console.log("2-les invitations" + parties_toutes);
-
+      query.then(invitations => {
+   
         //Trouver les parties créées par l'utilisateur
         partieModel.find({ "invites": { $elemMatch: {"$eq": utilisateur.courriel} } }, function (err, parties) {
-          if (!err && parties) {
-            console.log("3-BBB" + parties_toutes);
-            for (var partie of parties) {
-              parties_toutes.push(partie);
-            }
 
-            console.log("4-toutes les parties : "+parties_toutes);
+          var parties_acceptees = [];
+          if (!err && parties) {
+        
+            for (var partie of parties) {
+              parties_acceptees.push(partie);
+            }
+          
             res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
+            res.render('utilisateur_profil', { title: 'Timeline Online', aujourdhui:Date.now(), invitations:invitations, parties_acceptees:parties_acceptees});
           }
         });
        
