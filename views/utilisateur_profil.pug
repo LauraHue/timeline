@@ -3,7 +3,7 @@ extends layout
 block content
   h1 Profil de #{nom}
 
-  p Date aujourd'hui : #{aujourdhui}
+  p Date aujourd'hui : #{aujourdhui.getDate()}/#{aujourdhui.getMonth()}/#{aujourdhui.getFullYear()} à #{aujourdhui.getHours()}:#{aujourdhui.getMinutes()}
 
   h2 Invitations
   each invitation in invitations
@@ -12,7 +12,7 @@ block content
   h2 Cliquez sur le lien pour entrer dans la salle de jeu
   each partie in parties_acceptees
     <li>Partie du #{partie.date.getDate()}/#{partie.date.getMonth()}/#{partie.date.getFullYear()} à #{partie.date.getHours()}:#{partie.date.getMinutes()}<a href=""></a></li>
-  <h2><a href="/parties/#{nom}">Créer une partie</a></h2>
+  <h2><a href="/#{id_utilisateur/creerpartie}">Créer une partie</a></h2>
   <a href="/carte/creer">Créer une carte</a>
   <a href="/connexion">Se déconnecter</a>
 
