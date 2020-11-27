@@ -11,8 +11,10 @@ var utilisateurModel = require('../database/Utilisateur');
 // les pages d'accueil, d'inscription et de connexion).
 
 var checkToken = (req, res, next) => {
-  var token = req.headers['x-access-token'] || req.headers['authorization'];
-
+  //var token = req.headers['x-access-token'] || req.headers['authorization'];
+  var token = req.token;
+  var tokenS = req.cookies;
+  console.log(tokenS);
   if (token) {
     if (token.startsWith('Bearer ')) {
       // Nettoyage de la chaîne contenant le token
@@ -85,9 +87,9 @@ var validerJoueurs = (req, res, next) => {
       message: "Il faut inviter au moins 1 joueur."
     });
   }
-  else { 
+  else {
     //1 validation = 1 promesse
-    var promises = []; 
+    var promises = [];
     for (var i = 0; i < courriels.length; i++) {
       console.log(courriels[i]);
       promises.push(utilisateurModel.findOne({ courriel: courriels[i] }));
@@ -95,23 +97,23 @@ var validerJoueurs = (req, res, next) => {
     //On résout toutes les promesses en parallèle
     Promise.all(promises).then(
       (results) => {
-       
+
         var courrielsValides = [];
         var valide = true;
-        var i=0;
+        var i = 0;
         //La variable results est un tableau contenant les résultats. Si un des
         //résultats est null, ça signifie qu'un des courriels est invalide et
         //on arrête tout.
         do {
-          
+
           if (results[i] === null) {
             valide = false;
           }
           i++;
-        } while (valide===true && i<results.length);
+        } while (valide === true && i < results.length);
 
         //Tous les courriels sont valides, on passe à l'étape suivante
-        if (valide ===true) {
+        if (valide === true) {
           results.forEach(r => {
             courrielsValides.push(r.courriel);
           });
