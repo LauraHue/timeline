@@ -16,6 +16,11 @@ var utilisateurModel = require('../database/Utilisateur');
 var partieModel = require('../database/Partie');
 
 
+
+router.get('/:id_utilisateur/creerpartie', middleware.checkToken,middleware.validerJoueurs, function (req, res, next) {
+res.render('creerpartie_form');
+});
+
 /* POST : Créer une partie/des invitations */
 router.post('/:id_utilisateur/parties', middleware.checkToken,middleware.validerJoueurs, function (req, res, next) {
 
@@ -121,11 +126,12 @@ router.get('/:id_utilisateur/parties', function (req, res, next) {
             }
           
             //res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
-            res.render('utilisateur_profil', { title: 'Timeline Online', aujourdhui:Date.now(), invitations:invitations, parties_acceptees:parties_acceptees});
+             res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, parties_acceptees:parties_acceptees, aujourdhui: new Date() });
+           // res.render('utilisateur_profil', { title: 'Timeline Online', aujourdhui:new Date(), invitations:invitations, parties_acceptees:parties_acceptees});
           }
         });
        
-        //res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
+       
       });
 
     }
