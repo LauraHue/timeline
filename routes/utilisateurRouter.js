@@ -120,7 +120,7 @@ router.get('/:id_utilisateur/parties', function (req, res, next) {
               parties_acceptees.push(partie);
             }
           
-            res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
+            //res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
             res.render('utilisateur_profil', { title: 'Timeline Online', aujourdhui:Date.now(), invitations:invitations, parties_acceptees:parties_acceptees});
           }
         });
