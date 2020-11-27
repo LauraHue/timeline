@@ -14,7 +14,7 @@ var checkToken = (req, res, next) => {
   //var token = req.headers['x-access-token'] || req.headers['authorization'];
   var token = req.token;
   var tokenS = req.cookies;
-  console.log(tokenS);
+  console.log("le token est "+tokenS);
   if (token) {
     if (token.startsWith('Bearer ')) {
       // Nettoyage de la chaîne contenant le token
