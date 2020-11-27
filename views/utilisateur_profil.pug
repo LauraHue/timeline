@@ -3,7 +3,7 @@ extends layout
 block content
   h1 Profil de #{nom}
 
-  p Date aujourd'hui : #{aujourdhui.getDate()}/#{aujourdhui.getMonth()}/#{aujourdhui.getFullYear()} à #{aujourdhui.getHours()}:#{aujourdhui.getMinutes()}
+  p Date aujourd'hui : #{aujourdhui}
 
   h2 Invitations
   each invitation in invitations
