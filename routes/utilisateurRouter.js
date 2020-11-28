@@ -17,8 +17,9 @@ var partieModel = require('../database/Partie');
 
 
 
-router.get('/:id_utilisateur/creerpartie', middleware.checkToken,middleware.validerJoueurs, function (req, res, next) {
-res.render('creerpartie_form');
+router.get('/:id_utilisateur/creerpartie', middleware.checkToken, function (req, res, next) {
+
+res.render('creerpartie_form', {id_utilisateur:req.params.id_utilisateur});
 });
 
 /* POST : Créer une partie/des invitations */
@@ -55,7 +56,9 @@ router.post('/:id_utilisateur/parties', middleware.checkToken,middleware.valider
               invites.push(r.courriel);
             });
             console.log("Invitations envoyées!");
-            res.send({ partie: partie, invites: invites });
+            //res.send({ partie: partie, invites: invites });
+            res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
+
           });
 
         }
@@ -85,19 +88,20 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
         throw err;
         }
         else{
-          res.send({partie: partie});
+          //res.send({partie: partie});
+          res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
         }
       });
     }
   });
 
-  //res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
+  
 });
 
 
 
 /* GET : Obtenir une représentation de toutes les parties de l'utilisateur*/
-router.get('/:id_utilisateur/parties', function (req, res, next) {
+router.get('/:id_utilisateur/parties',middleware.checkToken, function (req, res, next) {
 
   //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter
   //dans la partie
