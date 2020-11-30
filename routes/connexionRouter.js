@@ -46,9 +46,13 @@ router.post('/', middleware.validerCredencesVides, function (req, res) {
             if (!err) {
               //Création du token d'authentification
               var token = jwt.sign({ nom: utilisateur.nom }, secret.secret, { expiresIn: '24h' });
-              res.setHeader('x-access-token', token);
-              res.send({ id:utilisateurModif._id,nom: utilisateurModif.nom, invitations: utilisateurModif.invitations });
-              //res.redirect('utilisateurs/' + utilisateur.id + '/parties');
+              //res.setHeader('x-access-token', token);
+              res.cookie('token',token, {expires:new Date(Date.now()+900000), httpOnly:true} )
+              //res.send({ id:utilisateurModif._id,nom: utilisateurModif.nom, invitations: utilisateurModif.invitations });
+              res.redirect('utilisateurs/' + utilisateur.id + '/parties');
+
+          
+
             }
           });
         },

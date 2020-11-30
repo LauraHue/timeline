@@ -7,8 +7,12 @@ block content
 
   h2 Invitations
   each invitation in invitations
-      <li>Invitation pour le #{invitation.date.getDate()}/#{invitation.date.getMonth()}/#{invitation.date.getFullYear()} à #{invitation.date.getHours()}:#{invitation.date.getMinutes()} <a href="parties/#{invitation.id}">Accepter</a> ou <a href="">Refuser</a></li>
-  <h2><a href="/parties/#{nom}">Créer une partie</a></h2>
+      <li>Invitation pour le #{invitation.date.getDate()}/#{invitation.date.getMonth()}/#{invitation.date.getFullYear()} à #{invitation.date.getHours()}:#{invitation.date.getMinutes()} <a href="parties/#{invitation.id}">Accepter</a></li>
+  
+  h2 Cliquez sur le lien pour entrer dans la salle de jeu
+  each partie in parties_acceptees
+    <li><a href="http://localhost:8000?param=#{partie.id}">Partie du #{partie.date.getDate()}/#{partie.date.getMonth()}/#{partie.date.getFullYear()} à #{partie.date.getHours()}:#{partie.date.getMinutes()}</a></li>
+  <h2><a href="/utilisateurs/#{id_utilisateur}/creerpartie">Créer une partie</a></h2>
   <a href="/carte/creer">Créer une carte</a>
   <a href="/connexion">Se déconnecter</a>
 

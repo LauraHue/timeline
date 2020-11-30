@@ -3,6 +3,11 @@
 var jwt = require('jsonwebtoken');
 const secret = require('../secret.js');
 
+var express = require('express');
+var cookieParser = require('cookie-parser');
+const app = express();
+app.use(cookieParser());
+
 // Les models
 var utilisateurModel = require('../database/Utilisateur');
 
@@ -11,8 +16,12 @@ var utilisateurModel = require('../database/Utilisateur');
 // les pages d'accueil, d'inscription et de connexion).
 
 var checkToken = (req, res, next) => {
-  var token = req.headers['x-access-token'] || req.headers['authorization'];
+  //var token = req.headers['x-access-token'] || req.headers['authorization'];
+  var tokens = req.cookies;
+  var token = tokens['token'];
 
+
+  console.log("le token est " + token);
   if (token) {
     if (token.startsWith('Bearer ')) {
       // Nettoyage de la chaîne contenant le token
@@ -63,9 +72,22 @@ var validerSiCredencesVides = (req, res, next) => {
 //les courriels. On ne veut pas insérer des courriels invalides dans la BD
 var validerJoueurs = (req, res, next) => {
   //Possibilité d'inviter 3 joueurs
-  var courriel1 = req.body.courriel1.trim();
-  var courriel2 = req.body.courriel2.trim();
-  var courriel3 = req.body.courriel3.trim();
+  var courriel1 = req.body.courriel1;
+  var courriel2 = req.body.courriel2;
+  var courriel3 = req.body.courriel3;
+
+  console.log(courriel1);
+  console.log(courriel2);
+  console.log(courriel3);
+
+  //On trim si l'input n'est pas null
+  if (!courriel1)
+    courriel1 = courriel1.trim();
+  if (!courriel2)
+    courriel2 = courriel2.trim();
+  if (!courriel3)
+    courriel3 = courriel3.trim();
+
 
   //Si le courriel n'est pas vide, on l'ajoute dans le tableau des courriels
   //à valider
@@ -85,9 +107,9 @@ var validerJoueurs = (req, res, next) => {
       message: "Il faut inviter au moins 1 joueur."
     });
   }
-  else { 
+  else {
     //1 validation = 1 promesse
-    var promises = []; 
+    var promises = [];
     for (var i = 0; i < courriels.length; i++) {
       console.log(courriels[i]);
       promises.push(utilisateurModel.findOne({ courriel: courriels[i] }));
@@ -95,23 +117,23 @@ var validerJoueurs = (req, res, next) => {
     //On résout toutes les promesses en parallèle
     Promise.all(promises).then(
       (results) => {
-       
+
         var courrielsValides = [];
         var valide = true;
-        var i=0;
+        var i = 0;
         //La variable results est un tableau contenant les résultats. Si un des
         //résultats est null, ça signifie qu'un des courriels est invalide et
         //on arrête tout.
         do {
-          
+
           if (results[i] === null) {
             valide = false;
           }
           i++;
-        } while (valide===true && i<results.length);
+        } while (valide === true && i < results.length);
 
         //Tous les courriels sont valides, on passe à l'étape suivante
-        if (valide ===true) {
+        if (valide === true) {
           results.forEach(r => {
             courrielsValides.push(r.courriel);
           });

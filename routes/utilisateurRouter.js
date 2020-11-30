@@ -17,6 +17,12 @@ var utilisateurModel = require('../database/Utilisateur');
 var partieModel = require('../database/Partie');
 
 
+
+router.get('/:id_utilisateur/creerpartie', middleware.checkToken, function (req, res, next) {
+
+res.render('creerpartie_form', {id_utilisateur:req.params.id_utilisateur});
+});
+
 /* POST : Créer une partie/des invitations */
 router.post('/:id_utilisateur/parties', middleware.checkToken,middleware.validerJoueurs, function (req, res, next) {
 
@@ -56,7 +62,9 @@ router.post('/:id_utilisateur/parties', middleware.checkToken,middleware.valider
               invites.push(r.courriel);
             });
             console.log("Invitations envoyées!");
-            res.send({ partie: partie, invites: invites });
+            //res.send({ partie: partie, invites: invites });
+            res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
+
           });
 
         }
@@ -86,19 +94,20 @@ router.put('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
         throw err;
         }
         else{
-          res.send({partie: partie});
+          //res.send({partie: partie});
+          res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
         }
       });
     }
   });
 
-  //res.redirect('/utilisateurs/'+req.params.id_utilisateur+'/parties');
+  
 });
 
 
 
 /* GET : Obtenir une représentation de toutes les parties de l'utilisateur*/
-router.get('/:id_utilisateur/parties', function (req, res, next) {
+router.get('/:id_utilisateur/parties',middleware.checkToken, function (req, res, next) {
 
   //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter
   //dans la partie
@@ -109,31 +118,30 @@ router.get('/:id_utilisateur/parties', function (req, res, next) {
     if (err) {
       console.log(err);
     }
-    else if (utilisateur != null) {
-      console.log("pas d'erreur");
-      //Promesse dans laquelle se trouve parties auxquelles l'utilisateur est
-      ///invité (et qu'il n'a pas encore acceptées)
+    else if (utilisateur != null) { 
+      //Promesse dans laquelle se trouve les parties auxquelles l'utilisateur est
+      //invité (et qu'il n'a pas encore acceptées)
       var query = getParties(utilisateur.invitations);
 
-      query.then(parties_toutes => {
-
-        console.log("1-courriel : "+ utilisateur.courriel);
-        console.log("2-les invitations" + parties_toutes);
-
+      query.then(invitations => {
+   
         //Trouver les parties créées par l'utilisateur
         partieModel.find({ "invites": { $elemMatch: {"$eq": utilisateur.courriel} } }, function (err, parties) {
-          if (!err && parties) {
-            console.log("3-BBB" + parties_toutes);
-            for (var partie of parties) {
-              parties_toutes.push(partie);
-            }
 
-            console.log("4-toutes les parties : "+parties_toutes);
-            res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
+          var parties_acceptees = [];
+          if (!err && parties) {
+        
+            for (var partie of parties) {
+              parties_acceptees.push(partie);
+            }
+          
+            //res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
+             res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, parties_acceptees:parties_acceptees, aujourdhui: new Date() });
+           // res.render('utilisateur_profil', { title: 'Timeline Online', aujourdhui:new Date(), invitations:invitations, parties_acceptees:parties_acceptees});
           }
         });
        
-        //res.render('utilisateur_profil', { title: 'Timeline Online',id_utilisateur: req.params.id_utilisateur,nom: utilisateur.nom, invitations: invitations, aujourdhui: new Date() });
+       
       });
 
     }
