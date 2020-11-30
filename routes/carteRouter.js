@@ -14,6 +14,7 @@ const db = mongoose.connection;
 //Models
 var carteModel = require('../database/Carte');
 
+//sort toute les cartes
 router.get('/',middleware.checkToken, function(req,res){
    if(req.body.id == null)
    {
@@ -24,10 +25,12 @@ router.get('/',middleware.checkToken, function(req,res){
    }
 });
 
+//dirige vert le formulaire de création de carte
 router.get('/creer',middleware.checkToken,function(req,res){
   res.render('creercarte_form');
 });
 
+//sort une carte en particulier
 router.get('/:id_carte',function(req, res){
   var id_carte = req.params.id_carte;
 
@@ -40,6 +43,7 @@ router.get('/:id_carte',function(req, res){
   });
 });
 
+//crée une carte
 router.post('/', middleware.checkToken,function(req, res) {
     var carte = new carteModel({   
       cue:req.body.cue,

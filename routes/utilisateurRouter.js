@@ -1,4 +1,5 @@
 "use strict";
+
 var express = require('express');
 var router = express.Router();
 
@@ -26,8 +27,13 @@ router.post('/:id_utilisateur/parties', middleware.checkToken,middleware.valider
   utilisateurModel.findById(id_createur, function (err, createur) {
     if (!err) {
       var invites = [createur.courriel];
+      var dateTime = new Date(req.body.date);
+      dateTime.setDate(dateTime.getDate() +1);
+      dateTime.setHours(req.body.heure);
+      dateTime.setMinutes(req.body.minute);
+      
       var partie = new partieModel({
-        date: req.body.date,
+        date: dateTime,
         invites: invites,
         pioches: [],
         tapis: []
