@@ -2,8 +2,17 @@
 
 var express = require('express');
 var router = express.Router();
-var jwt = require('jsonwebtoken');
+
 var secret = require('../secret');
+
+//Pour aller chercher le cookie dans la requête
+var cookieParser = require('cookie-parser');
+//Pour la création d'un token
+var jwt = require('jsonwebtoken');
+
+const app = express();
+app.use(cookieParser());
+
 
 //Middleware
 var middleware = require('./middleware');

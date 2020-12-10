@@ -4,9 +4,14 @@ var jwt = require('jsonwebtoken');
 const secret = require('../secret.js');
 
 var express = require('express');
+//Pour aller chercher le cookie dans la requête
 var cookieParser = require('cookie-parser');
+//Pour prévenir le CSRF
+var csrf = require('csurf')
+
 const app = express();
 app.use(cookieParser());
+
 
 // Les models
 var utilisateurModel = require('../database/Utilisateur');

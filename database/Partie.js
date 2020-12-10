@@ -2,13 +2,10 @@
 
 const mongoose = require('mongoose');
 
-
-
-const PartieSchema = new mongoose.Schema({
+const PartieSchema = new mongoose.Schema({ 
     date: Date,
-    invites: [String],
-    pioche: [Number],
-    tapis: [Number]
+    invites: [String]
+
 });
 
 module.exports = mongoose.model('Partie', PartieSchema);

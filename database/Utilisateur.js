@@ -23,8 +23,8 @@ const UtilisateurSchema = new mongoose.Schema({
             return validator.isEmail(value)
         }
     },
-    main: [{ carte: Number }],
-    invitations: [String]
+  
+    invitations: [ObjectId]
 
 
 
