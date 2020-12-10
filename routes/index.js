@@ -16,8 +16,6 @@ db.once("open", function () {
   console.log("Connection Successful!");
 });
 
-
-
 var utilisateurModel = require('../database/Utilisateur');
 
 /* GET home page. */
