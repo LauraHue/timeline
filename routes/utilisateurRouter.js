@@ -105,6 +105,7 @@ router.use('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 /* GET : Obtenir une représentation de toutes les parties de l'utilisateur*/
 router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res, next) {
 
+
   //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter
   //dans la partie
   var id_utilisateur = req.params.id_utilisateur;
@@ -121,26 +122,38 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
 
       query.then(invitations => {
 
-        // for (var invit of invitations){
-        //   console.log("Invitation : " + invitation.date);
-        // }
-        console.log(invitations);
-
         //Trouver les parties créées par l'utilisateur
         partieModel.find({ "invites": { $elemMatch: { "$eq": utilisateur.courriel } } }, function (err, parties) {
 
-          var parties_acceptees = [];
+          var parties_accept_affichables = [];
           if (!err && parties) {
-
+            
+            // //Fonctionne, mais les dates sont fuckées
             for (var partie of parties) {
-              parties_acceptees.push(partie);
-              console.log("Partie acceptee : " + partie.date);
-              console.log("Partie acceptee : " + partie.date.toString());
+              parties_accept_affichables.push(partie);
+
+              // var delai = new Date(partie.date - (60000*5));             
+              // console.log("delai = " + delai);
+              // console.log("datetime de la partie = "+partie.date);
+              // console.log("datetime now = " + new Date()) 
+              // console.log("  ");
+              // if(new Date() >= delai && new Date() <= partie.date){
+              //   parties_accept_affichables.push(partie);                
+              // }
+              
+              
+
             }
 
-            //res.send({ id: utilisateur.id, nom: utilisateur.nom, parties: parties_toutes });
-            res.render('utilisateur_profil', { title: 'Timeline Online', id_utilisateur: req.params.id_utilisateur, nom: utilisateur.nom, invitations: invitations, parties_acceptees: parties_acceptees, aujourdhui: new Date() });
-            // res.render('utilisateur_profil', { title: 'Timeline Online', aujourdhui:new Date(), invitations:invitations, parties_acceptees:parties_acceptees});
+            res.render('utilisateur_profil', {
+              title: 'Timeline Online',
+              id_utilisateur: req.params.id_utilisateur,
+              nom: utilisateur.nom,
+              invitations: invitations,
+              parties_acceptees: parties_accept_affichables,
+              aujourdhui: new Date()
+            });
+
           }
         });
 
@@ -164,14 +177,6 @@ async function getParties(invitations) {
     })
   }
   return invitationsAffichables;
-}
-
-// Fonction pour convertir la date et l'heure dans le format dd/mm/yy hh:mm
-function convertirDateTime(datetime) {
-  var datetimeFormate = "blabla" + datetime.getDate() + "/" + datetime.getMonth() + "/" + datetime.getFullYear() + " " + datetime.getHours() + ":" + datetime.getMinutes();
-  // console.log("date formatte : " + datetimeFormate);
-  //Dans la console : date formatte : 30/11/2020
-  return datetimeFormate;
 }
 
 module.exports = router;
