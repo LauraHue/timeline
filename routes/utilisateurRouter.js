@@ -26,16 +26,16 @@ router.post('/:id_utilisateur/parties', middleware.checkToken, middleware.valide
   //On va chercher l'utilisateur qui crée la partie afin de l'ajouter dans la partie
   var id_createur = req.params.id_utilisateur;
   var courriels = req.courriels;
-  var nouvelleDate = new Date();
-  nouvelleDate = req.body.date;
-  nouvelleDate.setHours(req.body.heure);
-  nouvelleDate.setMinutes(req.body.minute);
 
   utilisateurModel.findById(id_createur, function (err, createur) {
     if (!err) {
       var invites = [createur.courriel];
+      var dateTime = new Date(req.body.date);
+      dateTime.setHours(req.body.heure);
+      dateTime.setMinutes(req.body.minute);
+
       var partie = new partieModel({
-        date: nouvelleDate,
+        date: dateTime,
         invites: invites,
         pioches: [],
         tapis: []
