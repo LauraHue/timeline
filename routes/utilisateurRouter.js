@@ -105,11 +105,7 @@ router.use('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
 /* GET : Obtenir une représentation de toutes les parties de l'utilisateur*/
 router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res, next) {
 
-  var d = new Date("July 21, 1983 01:15:00");
-  var n = d.getUTCDate();
-  console.log("d = "+d);
-  console.log("n = "+n);
-  
+
   //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter
   //dans la partie
   var id_utilisateur = req.params.id_utilisateur;
@@ -134,7 +130,7 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
 
             parties_accept_affichables.push(partie); 
 
-            //Fonctionne, mais les dates sont fuckées
+            // //Fonctionne, mais les dates sont fuckées
             // for (var partie of parties) {
             //   var delai = new Date(partie.date - (60000*5));
              
@@ -145,8 +141,7 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
             //   if(new Date() >= delai && new Date() <= partie.date){
             //     parties_accept_affichables.push(partie); 
                 
-            //   }
-                        
+            //   }                        
             // }
 
             res.render('utilisateur_profil', {
