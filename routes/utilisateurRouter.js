@@ -127,22 +127,23 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
 
           var parties_accept_affichables = [];
           if (!err && parties) {
-
-            parties_accept_affichables.push(partie); 
-
+            
             // //Fonctionne, mais les dates sont fuckées
-            // for (var partie of parties) {
-            //   var delai = new Date(partie.date - (60000*5));
-             
-            //   console.log("delai = " + delai);
-            //   console.log("datetime de la partie = "+partie.date);
-            //   console.log("datetime now = " + new Date()) 
-            //   console.log("  ");
-            //   if(new Date() >= delai && new Date() <= partie.date){
-            //     parties_accept_affichables.push(partie); 
-                
-            //   }                        
-            // }
+            for (var partie of parties) {
+              parties_accept_affichables.push(partie);
+
+              // var delai = new Date(partie.date - (60000*5));             
+              // console.log("delai = " + delai);
+              // console.log("datetime de la partie = "+partie.date);
+              // console.log("datetime now = " + new Date()) 
+              // console.log("  ");
+              // if(new Date() >= delai && new Date() <= partie.date){
+              //   parties_accept_affichables.push(partie);                
+              // }
+              
+              
+
+            }
 
             res.render('utilisateur_profil', {
               title: 'Timeline Online',
