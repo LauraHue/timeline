@@ -7,7 +7,7 @@ block content
 
   h2 Invitations
   each invitation in invitations
-      <li><a href="parties/#{invitation.id}">Invitation pour le #{invitation.date.getDate()}/#{invitation.date.getMonth()}/#{invitation.date.getFullYear()} à #{invitation.date.getHours()}:#{invitation.date.getMinutes()}</a></li>
+      <li><a href="parties/#{invitation.id}">Invitation pour le #{invitation.date.getUTCDate()}/#{invitation.date.getUTCMonth()}/#{invitation.date.getUTCFullYear()} à #{invitation.date.getUTCHours()}:#{invitation.date.getUTCMinutes()}</a></li>
    
   
   h2 Cliquez sur le lien pour entrer dans la salle de jeu
