@@ -16,10 +16,7 @@ var db = mongoose.connection;
 var utilisateurModel = require('../database/Utilisateur');
 var partieModel = require('../database/Partie');
 
-
-
 router.get('/:id_utilisateur/creerpartie', middleware.checkToken, function (req, res, next) {
-
   res.render('creerpartie_form', { id_utilisateur: req.params.id_utilisateur });
 });
 
@@ -39,7 +36,6 @@ router.post('/:id_utilisateur/parties', middleware.checkToken, middleware.valide
         pioches: [],
         tapis: []
       });
-
 
       partie.save(function (err, partie) {
         if (!err) {
@@ -64,14 +60,9 @@ router.post('/:id_utilisateur/parties', middleware.checkToken, middleware.valide
 
         }
       });//fin du save
-
-
     }
   });//Fin du findBy
-
-
 });//Fin du POST
-
 
 /*  Permet d'accepter une invitation. Utilisation de router.use afin que toutes
     les requêtes pour cette URI doit dirigée ici.   */
@@ -96,20 +87,14 @@ router.use('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
       });
     }
   });
-
-
 });
-
-
 
 /* GET : Obtenir une représentation de toutes les parties de l'utilisateur*/
 router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res, next) {
 
-
   //On va chercher l'utilisateur qui veut créer la partie afin de l'ajouter
   //dans la partie
   var id_utilisateur = req.params.id_utilisateur;
-
 
   utilisateurModel.findById(id_utilisateur, function (err, utilisateur) {
     if (err) {
@@ -140,9 +125,7 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
               // if(new Date() >= delai && new Date() <= partie.date){
               //   parties_accept_affichables.push(partie);                
               // }
-              
-              
-
+          
             }
 
             res.render('utilisateur_profil', {
@@ -156,14 +139,9 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
 
           }
         });
-
-
       });
-
     }
   });
-
-
 });//Fin du GET
 
 // Fonction asynchrone pour aller chercher les parties dont l'id se trouve dans
@@ -180,4 +158,3 @@ async function getParties(invitations) {
 }
 
 module.exports = router;
-
