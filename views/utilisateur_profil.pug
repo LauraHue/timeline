@@ -12,7 +12,7 @@ block content
   
   h2 Cliquez sur le lien pour entrer dans la salle de jeu
   each partie in parties_acceptees
-    <li><<a href="https://timelinegametp3.herokuapp.com?id_partie=#{partie.id}&id_joueur=#{id_utilisateur}">Partie du #{partie.date.toLocaleString()}</a></li>
+    <li><a href="https://timelinegametp3.herokuapp.com?id_partie=#{partie.id}&id_joueur=#{id_utilisateur}">Partie du #{partie.date.toLocaleString()}</a></li>
   <h2><a href="/utilisateurs/#{id_utilisateur}/creerpartie">Créer une partie</a></h2>
   <a href="/carte/creer">Créer une carte</a>
   <a href="/connexion">Se déconnecter</a>
