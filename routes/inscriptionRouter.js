@@ -58,8 +58,8 @@ router.post('/', function (req, res) {
         }
       }
 
-      //res.render('signin_form', { title: 'Timeline Online', erreurs: erreursMessages });
-     res.send({erreurs:erreursMessages});
+      res.render('signin_form', { title: 'Timeline Online', erreurs: erreursMessages });
+     //res.send({erreurs:erreursMessages});
     }
     else {
       res.send({id:utilisateur._id, nom:utilisateur.nom, courriel:utilisateur.courriel});
