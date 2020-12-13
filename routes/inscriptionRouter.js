@@ -2,10 +2,10 @@
 
 var express = require('express');
 var router = express.Router();
+var bd_connexion = require('../bd_connexion');
 
 // Mongoose
 var mongoose = require('mongoose');
-
 mongoose.connect(bd_connexion.bd_uri,
   {
     useNewUrlParser: true,
@@ -13,7 +13,6 @@ mongoose.connect(bd_connexion.bd_uri,
     useCreateIndex: true,
     useFindAndModify: false
   });
-var db = mongoose.connection;
 
 var utilisateurModel = require('../database/Utilisateur');
 
