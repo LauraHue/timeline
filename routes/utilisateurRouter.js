@@ -127,9 +127,9 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
               console.log("datetime (UTC)now = " + new Date()) 
               console.log("  ");
 
-              console.log("delai = " + delai.toString());
-              console.log("datetime de la partie = "+partie.date.toString());
-              console.log("datetime now = " + Date()) 
+              console.log("delai = " + new Date(delai -(60000*60*5) ));
+              console.log("datetime de la partie = "+new Date(partie.date -(60000*60*5) ));
+              console.log("datetime now = " + new Date( new Date()-(60000*60*5)));
 
               parties_accept_affichables.push(partie);  
               // if(new Date() >= delai && new Date() <= partie.date){
