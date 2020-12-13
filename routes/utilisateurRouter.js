@@ -122,8 +122,7 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
               //parties_accept_affichables.push(partie);
 
               var delai = new Date(partie.date - (60000 * 5));
-              var now = new Date(new Date() - (60000 * 60 * 5))
-              //parties_accept_affichables.push(partie);  
+              var now = new Date(new Date() - (60000 * 60 * 5))            
               if (now >= delai && now <= partie.date) {
                 parties_accept_affichables.push(partie);
               }
