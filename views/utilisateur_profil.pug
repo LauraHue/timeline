@@ -1,20 +1,27 @@
-extends layout
+doctype html
 
-block content
-  h1 Profil de #{nom}
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    <META HTTP-EQUIV="Refresh" CONTENT="30">
 
-  p Date aujourd'hui : #{aujourdhui.toLocaleString()}
+  body
+    block content
 
-  h2 Invitations
-  each invitation in invitations
-     <li><a href="parties/#{invitation.id}">Invitation pour le #{invitation.date.toLocaleString()}</a></li>
+      h1 Profil de #{nom}
+
+      p Date aujourd'hui : #{aujourdhui.toLocaleString()}
+
+      h2 Invitations
+      each invitation in invitations
+      <li><a href="parties/#{invitation.id}">Invitation pour le #{invitation.date.toLocaleString()}</a></li>
    
-  
-  h2 Cliquez sur le lien pour entrer dans la salle de jeu
-  each partie in parties_acceptees
-    <li><a href="https://timelinegametp3.herokuapp.com?id_partie=#{partie.id}&id_joueur=#{id_utilisateur}">Partie du #{partie.date.toLocaleString()}</a></li>
-  <h2><a href="/utilisateurs/#{id_utilisateur}/creerpartie">Créer une partie</a></h2>
-  <a href="/cartes/creer">Créer une carte</a>
-  <a href="/connexion">Se déconnecter</a>
+      h2 Cliquez sur le lien pour entrer dans la salle de jeu
+      each partie in parties_acceptees
+      <li><a href="https://timelinegametp3.herokuapp.com?id_partie=#{partie.id}&id_joueur=#{id_utilisateur}">Partie du #{partie.date.toLocaleString()}</a></li>
+      <h2><a href="/utilisateurs/#{id_utilisateur}/creerpartie">Créer une partie</a></h2>
+      <a href="/cartes/creer">Créer une carte</a>
+      <a href="/connexion">Se déconnecter</a>
 
 
