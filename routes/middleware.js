@@ -58,10 +58,7 @@ var validerSiCredencesVides = (req, res, next) => {
   var mdp = req.body.mdp.trim();
 
   if (courriel === "" || mdp === "") {
-    return res.send({
-      success: false,
-      message: "Courriel et mot de passe Obligatoires pour se connecter"
-    });
+    res.render('login_form', { title: 'Timeline Online', erreur: 'Le courriel et le mot de passe sont OBGLIGATOIRES.' });
   }
   else {
     //On peut passer à l'étape suivante : valider la combinaison courriel-mdp
