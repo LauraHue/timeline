@@ -6,9 +6,13 @@ var router = express.Router();
 // Mongoose
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://admin:admin123@timeline.9e4sd.mongodb.net/timeline?retryWrites=true&w=majority',
- { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true,useFindAndModify: false });
-
+mongoose.connect(bd_connexion.bd_uri,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+  });
 var db = mongoose.connection;
 
 var utilisateurModel = require('../database/Utilisateur');

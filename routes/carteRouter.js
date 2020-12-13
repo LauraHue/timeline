@@ -2,13 +2,18 @@
 
 var express = require('express');
 var router = express.Router();
-
+var bd_connexion = require('../bd_connexion');
 //Middleware
 var middleware = require('./middleware');
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://admin:admin123@timeline.9e4sd.mongodb.net/timeline?retryWrites=true&w=majority',
- { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true,useFindAndModify: false });
+mongoose.connect(bd_connexion.bd_uri,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+  });
 const db = mongoose.connection;
 
 //Models

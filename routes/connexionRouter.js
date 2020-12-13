@@ -2,8 +2,8 @@
 
 var express = require('express');
 var router = express.Router();
-
 var secret = require('../secret');
+var bd_connexion = require('../bd_connexion');
 
 //Pour aller chercher le cookie dans la requête
 var cookieParser = require('cookie-parser');
@@ -13,14 +13,18 @@ var jwt = require('jsonwebtoken');
 const app = express();
 app.use(cookieParser());
 
-
 //Middleware
 var middleware = require('./middleware');
 
 // Mongoose
 var mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://admin:admin123@timeline.9e4sd.mongodb.net/timeline?retryWrites=true&w=majority',
-  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false });
+mongoose.connect(bd_connexion.bd_uri,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+  });
 var db = mongoose.connection;
 
 // Les models
@@ -45,18 +49,18 @@ router.post('/', middleware.validerCredencesVides, function (req, res) {
     if (!err && utilisateur) {
       //Pour résoudre la promesse retournée, il faut utiliser .then
       retirerInvitationsPerimees(utilisateur).then(
-        
+
         //Si retirer les invitations périmées a fonctionné
         function (result) {
           utilisateur.invitations = result;
 
           // Mettre à jour l'utilisateur
-          utilisateurModel.findOneAndUpdate({_id:utilisateur._id},  { invitations: result }).exec(function (err, utilisateurModif) {
+          utilisateurModel.findOneAndUpdate({ _id: utilisateur._id }, { invitations: result }).exec(function (err, utilisateurModif) {
             if (!err) {
               //Création du token d'authentification
               var token = jwt.sign({ nom: utilisateur.nom }, secret.secret, { expiresIn: '24h' });
               //res.setHeader('x-access-token', token);
-              res.cookie('token',token, {expires:new Date(Date.now()+900000), httpOnly:true} );
+              res.cookie('token', token, { expires: new Date(Date.now() + 900000), httpOnly: true });
               //res.send({ id:utilisateurModif._id,nom: utilisateurModif.nom, invitations: utilisateurModif.invitations });
               res.redirect('utilisateurs/' + utilisateur.id + '/parties');
             }
@@ -91,7 +95,7 @@ async function retirerInvitationsPerimees(utilisateur) {
         //console.log("partie pushée" + partie.id);
       }
       else {
-        console.log("La partie" + id_partie+ "est périmée ou n'existe pas");
+        console.log("La partie" + id_partie + "est périmée ou n'existe pas");
       }
     });
 
