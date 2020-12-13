@@ -5,14 +5,11 @@ html
     <META HTTP-EQUIV="Refresh" CONTENT="30">
   body
     block content
-    <h1> Profil de #{nom}</h1>
-
+    h1 Profil de #{nom}
     p Date aujourd'hui : #{aujourdhui.toLocaleString()}
-
     h2 Invitations
     each invitation in invitations
     <li><a href="parties/#{invitation.id}">Invitation pour le #{invitation.date.toLocaleString()}</a></li>
-   
     h2 Cliquez sur le lien pour entrer dans la salle de jeu
     each partie in parties_acceptees
     <li><a href="https://timelinegametp3.herokuapp.com?id_partie=#{partie.id}&id_joueur=#{id_utilisateur}">Partie du #{partie.date.toLocaleString()}</a></li>
