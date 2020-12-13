@@ -116,26 +116,18 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
 
           var parties_accept_affichables = [];
           if (!err && parties) {
-            
+
             // //Fonctionne, mais les dates sont fuckées
             for (var partie of parties) {
               //parties_accept_affichables.push(partie);
 
-              var delai = new Date(partie.date - (60000*5));             
-              console.log("delai (UTC)= " + delai);
-              console.log("datetime (UTC) de la partie = "+partie.date);
-              console.log("datetime (UTC)now = " + new Date()) 
-              console.log("  ");
+              var delai = new Date(partie.date - (60000 * 5));
+              var now = new Date(new Date() - (60000 * 60 * 5))
+              //parties_accept_affichables.push(partie);  
+              if (now >= delai && now <= partie.date) {
+                parties_accept_affichables.push(partie);
+              }
 
-              console.log("delai = " + new Date(delai -(60000*60*5) ));
-              console.log("datetime de la partie = "+new Date(partie.date -(60000*60*5) ));
-              console.log("datetime now = " + new Date( new Date()-(60000*60*5)));
-
-              parties_accept_affichables.push(partie);  
-              // if(new Date() >= delai && new Date() <= partie.date){
-              //   parties_accept_affichables.push(partie);                
-              // }
-          
             }
 
             res.render('utilisateur_profil', {
@@ -144,7 +136,7 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
               nom: utilisateur.nom,
               invitations: invitations,
               parties_acceptees: parties_accept_affichables,
-              aujourdhui: new Date()
+              aujourdhui: now
             });
 
           }
