@@ -6,7 +6,7 @@ html
     block content
     h1 les cartes
     each carte in cartes
-      <li><a href="/carte/#{carte._id}">#{carte.cue}</a></li>
+      <li>Nom: #{carte.cue} req: #{carte.req}</li>
     
     span=erreur
   
