@@ -58,9 +58,8 @@ router.post('/:id_utilisateur/parties', middleware.checkToken, middleware.valide
             //La variable results contient les utilisateurs trouvés
             results.forEach(r => {
               invites.push(r.courriel);
-            });
-            console.log("Invitations envoyées!");
-            //res.send({ partie: partie, invites: invites });
+            });            
+           
             res.redirect('/utilisateurs/' + req.params.id_utilisateur + '/parties');
 
           });
@@ -73,7 +72,7 @@ router.post('/:id_utilisateur/parties', middleware.checkToken, middleware.valide
 
 /*  Permet d'accepter une invitation. Utilisation de router.use afin que toutes
     les requêtes pour cette URI doit dirigée ici.   */
-router.use('/:id_utilisateur/parties/:id_partie', function (req, res, next) {
+router.use('/:id_utilisateur/parties/:id_partie', function (req, res) {
 
   //Puisque le joueur accepte la partie, la partie n'a plus besoin de se trouver dans le joueur
   utilisateurModel.findByIdAndUpdate(req.params.id_utilisateur, { $pull: { invitations: req.params.id_partie } }, function (err, utilisateur) {

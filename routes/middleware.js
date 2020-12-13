@@ -19,10 +19,8 @@ var utilisateurModel = require('../database/Utilisateur');
 // les pages d'accueil, d'inscription et de connexion).
 
 var checkToken = (req, res, next) => {
-  //var token = req.headers['x-access-token'] || req.headers['authorization'];
   var tokens = req.cookies;
   var token = tokens['token'];
-
 
   console.log("le token est " + token);
   if (token) {

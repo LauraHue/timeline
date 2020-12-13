@@ -17,7 +17,6 @@ mongoose.connect(bd_connexion.bd_uri,
     });
 
 // Les models
-var utilisateurModel = require('../database/Utilisateur');
 var partieModel = require('../database/Partie');
 
 router.get('/', middleware.checkToken, function (req, res) {

@@ -17,10 +17,8 @@ mongoose.connect(bd_connexion.bd_uri,
 var utilisateurModel = require('../database/Utilisateur');
 
 /* Permet d'obtenir le formulaire de d'inscription*/
-router.get('/', function (req, res, next) {
-
+router.get('/', function (req, res) {
   res.render('signin_form', { title: 'Timeline Online' });
-
 });
 
 /*  Retour du formulaire complété   */
@@ -34,13 +32,10 @@ router.post('/', function (req, res) {
   // Vérifier l'adresse courriel
   if (courriel != null) {
     utilisateurModel.findOne({ courriel: courriel }, function (err, result) {
-      if (err) {
+      if (err)
         console.log(err);
-      }
-      else if(result != null){
+      else if (result != null)
         res.render('signin_form', { title: 'Timeline Online', erreur_courriel: "L'adresse courriel est déjà utilisée" });
-
-      }
     });
   }
 
@@ -62,12 +57,10 @@ router.post('/', function (req, res) {
       }
 
       res.render('signin_form', { title: 'Timeline Online', erreurs: erreursMessages });
-     //res.send({erreurs:erreursMessages});
     }
-    else {
-      res.send({id:utilisateur._id, nom:utilisateur.nom, courriel:utilisateur.courriel});
-    }
- 
+    else
+      res.send({ id: utilisateur._id, nom: utilisateur.nom, courriel: utilisateur.courriel });
+
   });
 
 });
