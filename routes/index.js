@@ -4,6 +4,8 @@ var express = require('express');
 var router = express.Router();
 var bd_connexion = require('../bd_connexion');
 
+
+console.log(bd_connexion.bd_uri);
 // Mongoose
 var mongoose = require('mongoose');
 

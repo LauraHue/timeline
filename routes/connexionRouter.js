@@ -25,7 +25,6 @@ mongoose.connect(bd_connexion.bd_uri,
     useCreateIndex: true,
     useFindAndModify: false
   });
-var db = mongoose.connection;
 
 // Les models
 var utilisateurModel = require('../database/Utilisateur');
@@ -59,9 +58,8 @@ router.post('/', middleware.validerCredencesVides, function (req, res) {
             if (!err) {
               //Création du token d'authentification
               var token = jwt.sign({ nom: utilisateur.nom }, secret.secret, { expiresIn: '24h' });
-              //res.setHeader('x-access-token', token);
-              res.cookie('token', token, { expires: new Date(Date.now() + 900000), httpOnly: true });
-              //res.send({ id:utilisateurModif._id,nom: utilisateurModif.nom, invitations: utilisateurModif.invitations });
+            
+              res.cookie('token', token, { expires: new Date(Date.now() + 900000), httpOnly: true });           
               res.redirect('utilisateurs/' + utilisateur.id + '/parties');
             }
           });
@@ -91,8 +89,7 @@ async function retirerInvitationsPerimees(utilisateur) {
     await partieModel.findById(id_partie, function (err, partie) {
 
       if (partie != null && partie.date >= Date.now()) {
-        invitationsValides.push(partie.id);
-        //console.log("partie pushée" + partie.id);
+        invitationsValides.push(partie.id);      
       }
       else {
         console.log("La partie" + id_partie + "est périmée ou n'existe pas");
@@ -100,7 +97,7 @@ async function retirerInvitationsPerimees(utilisateur) {
     });
 
   }//fin foreach
-  console.log("dans la fonction : " + invitationsValides)
+
   return invitationsValides;
 }
 
