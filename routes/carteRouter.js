@@ -57,8 +57,11 @@ router.post('/', middleware.checkToken,function(req, res) {
         console.log("Enregistré!");
         console.log(carte._id);
       }
-      //res.render('creercarte_form');
-      res.send({cue:carte.cue,show:carte.show,rep:carte.rep});
+      
+      carteModel.find(null, function(err,cartes){
+        if (err) { throw err;}
+        res.render('cartes', {cartes: cartes});
+      });
     });
   });
 
