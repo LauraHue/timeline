@@ -122,13 +122,19 @@ router.get('/:id_utilisateur/parties', middleware.checkToken, function (req, res
               //parties_accept_affichables.push(partie);
 
               var delai = new Date(partie.date - (60000*5));             
-              console.log("delai = " + delai);
-              console.log("datetime de la partie = "+partie.date);
-              console.log("datetime now = " + new Date()) 
+              console.log("delai (UTC)= " + delai);
+              console.log("datetime (UTC) de la partie = "+partie.date);
+              console.log("datetime (UTC)now = " + new Date()) 
               console.log("  ");
-              if(new Date() >= delai && new Date() <= partie.date){
-                parties_accept_affichables.push(partie);                
-              }
+
+              console.log("delai = " + delai.toString());
+              console.log("datetime de la partie = "+partie.date.toString());
+              console.log("datetime now = " + Date()) 
+
+              parties_accept_affichables.push(partie);  
+              // if(new Date() >= delai && new Date() <= partie.date){
+              //   parties_accept_affichables.push(partie);                
+              // }
           
             }
 
